@@ -1,0 +1,28 @@
+# Local Python environments
+.venv/
+.env
+.python-version
+
+# Python cache and tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Packaging
+*.egg-info/
+build/
+dist/
+
+# Editor and local tool state
+.vscode/
+.DS_Store
+.codex
+
+# Generated project outputs
+outputs/
+artifacts/
+
