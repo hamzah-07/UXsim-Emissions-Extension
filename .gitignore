@@ -21,8 +21,8 @@ dist/
 .vscode/
 .DS_Store
 .codex
+.mplconfig/
 
 # Generated project outputs
 outputs/
 artifacts/
-
