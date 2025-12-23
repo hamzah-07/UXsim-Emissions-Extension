@@ -15,6 +15,23 @@ from uxsim_emissions.integration import UXsimAdapter
 
 
 class UXsimAdapterTestCase(unittest.TestCase):
+    def test_adapter_extracts_link_state_before_simulation_starts(self) -> None:
+        world, _, _ = build_smoke_world()
+
+        observations = UXsimAdapter().iter_link_observations(world)
+
+        self.assertEqual(len(observations), 1)
+        observation = observations[0]
+        self.assertEqual(observation.link_id, "orig_dest")
+        self.assertEqual(observation.speed_mps, 10)
+        self.assertEqual(observation.density, 0.0)
+        self.assertEqual(observation.flow, 0.0)
+        self.assertEqual(observation.num_vehicles, 0)
+        self.assertEqual(observation.num_vehicles_queue, 0)
+        self.assertEqual(observation.length_m, 100)
+        self.assertIsNone(observation.timestep)
+        self.assertIsNone(observation.time_s)
+
     def test_adapter_returns_no_observations_before_simulation_starts(self) -> None:
         world, _, _ = build_smoke_world()
 
@@ -39,6 +56,24 @@ class UXsimAdapterTestCase(unittest.TestCase):
         self.assertEqual(observation.timestep, 5)
         self.assertEqual(observation.time_s, 5)
 
+    def test_adapter_extracts_link_state_mid_simulation(self) -> None:
+        world, _, _ = build_smoke_world()
+        world.exec_simulation(duration_t2=5)
+
+        observations = UXsimAdapter().iter_link_observations(world)
+
+        self.assertEqual(len(observations), 1)
+        observation = observations[0]
+        self.assertEqual(observation.link_id, "orig_dest")
+        self.assertEqual(observation.speed_mps, 10.0)
+        self.assertEqual(observation.density, 0.01)
+        self.assertEqual(observation.flow, 0.1)
+        self.assertEqual(observation.num_vehicles, 1)
+        self.assertEqual(observation.num_vehicles_queue, 0)
+        self.assertEqual(observation.length_m, 100)
+        self.assertEqual(observation.timestep, 5)
+        self.assertEqual(observation.time_s, 5)
+
     def test_adapter_returns_no_observations_after_trip_completion(self) -> None:
         world, _, _ = build_smoke_world()
         world.exec_simulation()
@@ -46,6 +81,20 @@ class UXsimAdapterTestCase(unittest.TestCase):
         observations = UXsimAdapter().iter_vehicle_observations(world)
 
         self.assertEqual(observations, [])
+
+    def test_adapter_extracts_link_state_after_trip_completion(self) -> None:
+        world, _, _ = build_smoke_world()
+        world.exec_simulation()
+
+        observations = UXsimAdapter().iter_link_observations(world)
+
+        self.assertEqual(len(observations), 1)
+        observation = observations[0]
+        self.assertEqual(observation.link_id, "orig_dest")
+        self.assertEqual(observation.num_vehicles, 0)
+        self.assertEqual(observation.num_vehicles_queue, 0)
+        self.assertEqual(observation.timestep, 60)
+        self.assertEqual(observation.time_s, 60)
 
 
 if __name__ == "__main__":

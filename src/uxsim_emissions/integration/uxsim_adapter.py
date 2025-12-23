@@ -19,8 +19,23 @@ class VehicleObservation:
     time_s: float | None
 
 
+@dataclass(slots=True)
+class LinkObservation:
+    """Normalised per-link traffic state captured from a UXsim timestep."""
+
+    link_id: str
+    speed_mps: float
+    density: float
+    flow: float
+    num_vehicles: float
+    num_vehicles_queue: float
+    length_m: float
+    timestep: int | None
+    time_s: float | None
+
+
 class UXsimAdapter:
-    """Translate live UXsim world state into normalised vehicle observations."""
+    """Translate live UXsim world state into normalised observations."""
 
     def iter_vehicle_observations(self, world: Any) -> list[VehicleObservation]:
         if not hasattr(world, "VEHICLES_RUNNING"):
@@ -40,6 +55,30 @@ class UXsimAdapter:
                     acceleration_mps2=None,
                     distance_traveled_m=vehicle.distance_traveled,
                     timestep=getattr(world, "T", 0),
+                    time_s=getattr(world, "TIME", None),
+                )
+            )
+
+        return observations
+
+    def iter_link_observations(self, world: Any) -> list[LinkObservation]:
+        if not hasattr(world, "LINKS"):
+            return []
+
+        observations: list[LinkObservation] = []
+        for link in world.LINKS:
+            # WIP: keep the raw UXsim aggregate fields visible for now so we can
+            # validate units before the first emissions model consumes them.
+            observations.append(
+                LinkObservation(
+                    link_id=link.name,
+                    speed_mps=link.speed,
+                    density=link.density,
+                    flow=link.flow,
+                    num_vehicles=link.num_vehicles,
+                    num_vehicles_queue=link.num_vehicles_queue,
+                    length_m=link.length,
+                    timestep=getattr(world, "T", None),
                     time_s=getattr(world, "TIME", None),
                 )
             )
