@@ -34,6 +34,16 @@ class LinkObservation:
     time_s: float | None
 
 
+@dataclass(slots=True)
+class WorldObservationSnapshot:
+    """Bundle all normalized observations captured for one world instant."""
+
+    timestep: int | None
+    time_s: float | None
+    vehicle_observations: list[VehicleObservation]
+    link_observations: list[LinkObservation]
+
+
 class UXsimAdapter:
     """Translate live UXsim world state into normalised observations."""
 
@@ -84,3 +94,11 @@ class UXsimAdapter:
             )
 
         return observations
+
+    def capture_snapshot(self, world: Any) -> WorldObservationSnapshot:
+        return WorldObservationSnapshot(
+            timestep=getattr(world, "T", None),
+            time_s=getattr(world, "TIME", None),
+            vehicle_observations=self.iter_vehicle_observations(world),
+            link_observations=self.iter_link_observations(world),
+        )
