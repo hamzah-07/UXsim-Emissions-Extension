@@ -136,7 +136,7 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
             position_m=90.0,
             speed_mps=10.0,
             acceleration_mps2=None,
-            distance_traveled_m=0.0,
+            distance_traveled_m=90.0,
             timestep=9,
             time_s=9.0,
         )
@@ -157,8 +157,42 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
             current_observation=current_observation,
         )
 
-        self.assertEqual(sample.pollutants_g["co2"], 0.0)
-        self.assertEqual(sample.distance_m, 0.0)
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertEqual(sample.distance_m, 10.0)
+
+    def test_compute_from_observation_pair_falls_back_to_average_speed_when_needed(self) -> None:
+        model = AverageSpeedCO2Model(self.factor_table)
+
+        previous_observation = VehicleObservation(
+            vehicle_id="veh_0",
+            state="run",
+            link_id="link_a",
+            position_m=95.0,
+            speed_mps=8.0,
+            acceleration_mps2=None,
+            distance_traveled_m=0.0,
+            timestep=10,
+            time_s=10.0,
+        )
+        current_observation = VehicleObservation(
+            vehicle_id="veh_0",
+            state="run",
+            link_id="link_b",
+            position_m=3.0,
+            speed_mps=12.0,
+            acceleration_mps2=None,
+            distance_traveled_m=0.0,
+            timestep=11,
+            time_s=11.0,
+        )
+
+        sample = model.compute_from_observation_pair(
+            previous_observation=previous_observation,
+            current_observation=current_observation,
+        )
+
+        self.assertEqual(sample.distance_m, 10.0)
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.81, places=6)
 
 
 if __name__ == "__main__":

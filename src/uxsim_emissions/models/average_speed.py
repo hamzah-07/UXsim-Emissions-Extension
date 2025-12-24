@@ -96,18 +96,20 @@ class AverageSpeedCO2Model(EmissionModel):
         if delta_time_s <= 0:
             raise ValueError("Observation pair must have a positive elapsed time")
 
-        if current_observation.state != "run":
+        distance_m = _distance_from_observation_pair(
+            previous_observation=previous_observation,
+            current_observation=current_observation,
+            delta_time_s=delta_time_s,
+        )
+        if distance_m <= 0:
             return EmissionSample(
                 pollutants_g={self.pollutant: 0.0},
                 distance_m=0.0,
             )
 
-        # WIP: for the first end-to-end path, use current-step speed times elapsed
-        # time as the traveled distance proxy. We can tighten this later with
-        # log-derived or delta-based distance once the adapter matures.
-        distance_m = current_observation.speed_mps * delta_time_s
+        average_speed_mps = distance_m / delta_time_s
         return self.compute(
-            speed_mps=current_observation.speed_mps,
+            speed_mps=average_speed_mps,
             distance_m=distance_m,
             metadata=metadata,
         )
@@ -117,3 +119,30 @@ def _interpolate(*, x: float, x0: float, y0: float, x1: float, y1: float) -> flo
     if x1 == x0:
         return y0
     return y0 + (x - x0) * (y1 - y0) / (x1 - x0)
+
+
+def _distance_from_observation_pair(
+    *,
+    previous_observation: VehicleObservation,
+    current_observation: VehicleObservation,
+    delta_time_s: float,
+) -> float:
+    distance_delta_m = (
+        current_observation.distance_traveled_m - previous_observation.distance_traveled_m
+    )
+    if distance_delta_m > 0:
+        return distance_delta_m
+
+    if (
+        previous_observation.link_id is not None
+        and previous_observation.link_id == current_observation.link_id
+        and current_observation.position_m >= previous_observation.position_m
+    ):
+        position_delta_m = current_observation.position_m - previous_observation.position_m
+        if position_delta_m > 0:
+            return position_delta_m
+
+    average_speed_mps = (
+        previous_observation.speed_mps + current_observation.speed_mps
+    ) / 2.0
+    return max(0.0, average_speed_mps * delta_time_s)
