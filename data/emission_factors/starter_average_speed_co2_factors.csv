@@ -1,0 +1,8 @@
+vehicle_type,pollutant,speed_kph,emission_g_per_km
+passenger_car,co2,10,320
+passenger_car,co2,30,190
+passenger_car,co2,50,160
+light_van,co2,10,380
+light_van,co2,30,240
+light_van,co2,50,200
+
