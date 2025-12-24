@@ -11,7 +11,10 @@ if str(SRC_PATH) not in sys.path:
     sys.path.insert(0, str(SRC_PATH))
 
 from uxsim_emissions.factors import load_average_speed_factor_table
+from uxsim_emissions.integration import UXsimAdapter
+from uxsim_emissions.integration.uxsim_adapter import VehicleObservation
 from uxsim_emissions.models import AverageSpeedCO2Model
+from experiments.minimal_uxsim_smoke import build_smoke_world
 
 
 class AverageSpeedCO2ModelTestCase(unittest.TestCase):
@@ -72,6 +75,90 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
                 distance_m=100,
                 metadata={"vehicle_type": "heavy_truck"},
             )
+
+    def test_compute_from_observation_pair_uses_snapshot_time_delta(self) -> None:
+        world, _, _ = build_smoke_world()
+        adapter = UXsimAdapter()
+        model = AverageSpeedCO2Model(self.factor_table, default_vehicle_type="passenger_car")
+
+        world.exec_simulation(duration_t2=4)
+        previous_observation = adapter.capture_snapshot(world).vehicle_observations[0]
+        world.exec_simulation(duration_t2=1)
+        current_observation = adapter.capture_snapshot(world).vehicle_observations[0]
+
+        sample = model.compute_from_observation_pair(
+            previous_observation=previous_observation,
+            current_observation=current_observation,
+        )
+
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertEqual(sample.distance_m, 10.0)
+
+    def test_compute_from_observation_pair_rejects_mismatched_vehicles(self) -> None:
+        model = AverageSpeedCO2Model(self.factor_table)
+
+        previous_observation = VehicleObservation(
+            vehicle_id="veh_0",
+            state="run",
+            link_id="orig_dest",
+            position_m=10.0,
+            speed_mps=10.0,
+            acceleration_mps2=None,
+            distance_traveled_m=0.0,
+            timestep=1,
+            time_s=1.0,
+        )
+        current_observation = VehicleObservation(
+            vehicle_id="veh_1",
+            state="run",
+            link_id="orig_dest",
+            position_m=20.0,
+            speed_mps=10.0,
+            acceleration_mps2=None,
+            distance_traveled_m=0.0,
+            timestep=2,
+            time_s=2.0,
+        )
+
+        with self.assertRaisesRegex(ValueError, "same vehicle"):
+            model.compute_from_observation_pair(
+                previous_observation=previous_observation,
+                current_observation=current_observation,
+            )
+
+    def test_compute_from_observation_pair_returns_zero_when_vehicle_not_running(self) -> None:
+        model = AverageSpeedCO2Model(self.factor_table)
+
+        previous_observation = VehicleObservation(
+            vehicle_id="veh_0",
+            state="run",
+            link_id="orig_dest",
+            position_m=90.0,
+            speed_mps=10.0,
+            acceleration_mps2=None,
+            distance_traveled_m=0.0,
+            timestep=9,
+            time_s=9.0,
+        )
+        current_observation = VehicleObservation(
+            vehicle_id="veh_0",
+            state="end",
+            link_id=None,
+            position_m=0.0,
+            speed_mps=10.0,
+            acceleration_mps2=None,
+            distance_traveled_m=100.0,
+            timestep=10,
+            time_s=10.0,
+        )
+
+        sample = model.compute_from_observation_pair(
+            previous_observation=previous_observation,
+            current_observation=current_observation,
+        )
+
+        self.assertEqual(sample.pollutants_g["co2"], 0.0)
+        self.assertEqual(sample.distance_m, 0.0)
 
 
 if __name__ == "__main__":

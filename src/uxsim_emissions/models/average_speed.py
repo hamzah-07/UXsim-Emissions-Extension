@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Mapping
 
 from uxsim_emissions.factors.schema import AverageSpeedFactorTable
+from uxsim_emissions.integration.uxsim_adapter import VehicleObservation
 
 from .base import EmissionModel, EmissionSample
 
@@ -79,9 +80,40 @@ class AverageSpeedCO2Model(EmissionModel):
 
         raise RuntimeError("Failed to resolve average-speed emission factor")
 
+    def compute_from_observation_pair(
+        self,
+        *,
+        previous_observation: VehicleObservation,
+        current_observation: VehicleObservation,
+        metadata: Mapping[str, object] | None = None,
+    ) -> EmissionSample:
+        if previous_observation.vehicle_id != current_observation.vehicle_id:
+            raise ValueError("Observation pair must belong to the same vehicle")
+        if previous_observation.time_s is None or current_observation.time_s is None:
+            raise ValueError("Observation pair must include time_s values")
+
+        delta_time_s = current_observation.time_s - previous_observation.time_s
+        if delta_time_s <= 0:
+            raise ValueError("Observation pair must have a positive elapsed time")
+
+        if current_observation.state != "run":
+            return EmissionSample(
+                pollutants_g={self.pollutant: 0.0},
+                distance_m=0.0,
+            )
+
+        # WIP: for the first end-to-end path, use current-step speed times elapsed
+        # time as the traveled distance proxy. We can tighten this later with
+        # log-derived or delta-based distance once the adapter matures.
+        distance_m = current_observation.speed_mps * delta_time_s
+        return self.compute(
+            speed_mps=current_observation.speed_mps,
+            distance_m=distance_m,
+            metadata=metadata,
+        )
+
 
 def _interpolate(*, x: float, x0: float, y0: float, x1: float, y1: float) -> float:
     if x1 == x0:
         return y0
     return y0 + (x - x0) * (y1 - y0) / (x1 - x0)
-
