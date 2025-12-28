@@ -96,6 +96,8 @@ class AverageSpeedCO2Model(EmissionModel):
         if delta_time_s <= 0:
             raise ValueError("Observation pair must have a positive elapsed time")
 
+        # Try the most faithful distance hint first, then fall back gently when
+        # UXsim has not updated that particular field yet.
         distance_m = _distance_from_observation_pair(
             previous_observation=previous_observation,
             current_observation=current_observation,
@@ -138,10 +140,14 @@ def _distance_from_observation_pair(
         and previous_observation.link_id == current_observation.link_id
         and current_observation.position_m >= previous_observation.position_m
     ):
+        # Same link is the easy case: position change is a decent stand-in for
+        # interval distance even if the cumulative field has lagged behind.
         position_delta_m = current_observation.position_m - previous_observation.position_m
         if position_delta_m > 0:
             return position_delta_m
 
+    # When a vehicle has just crossed a boundary, the cleanest thing we can do
+    # for now is fall back to the interval's average speed.
     average_speed_mps = (
         previous_observation.speed_mps + current_observation.speed_mps
     ) / 2.0

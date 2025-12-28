@@ -53,8 +53,8 @@ class UXsimAdapter:
 
         observations: list[VehicleObservation] = []
         for vehicle in world.VEHICLES_RUNNING.values():
-            # WIP: leave acceleration unset until we decide whether to derive it
-            # from successive snapshots or vehicle logs.
+            # Acceleration can wait for now. The snapshot and log data are enough
+            # to get the first emissions slice working without guessing too much.
             observations.append(
                 VehicleObservation(
                     vehicle_id=vehicle.name,
@@ -96,6 +96,8 @@ class UXsimAdapter:
         return observations
 
     def capture_snapshot(self, world: Any) -> WorldObservationSnapshot:
+        # UXsim only fills in some runtime fields once the sim has actually
+        # started, so keep the top-level time markers optional.
         return WorldObservationSnapshot(
             timestep=getattr(world, "T", None),
             time_s=getattr(world, "TIME", None),
