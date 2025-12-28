@@ -15,6 +15,9 @@ def run_average_speed_snapshot_interval(
     previous_snapshot: WorldObservationSnapshot,
     current_snapshot: WorldObservationSnapshot,
 ) -> SnapshotIntervalEmissionResult:
+    # TODO: this is fine for one interval at a time, but we will probably want
+    # a small higher-level helper that walks a whole run and yields these
+    # results in sequence.
     return _run_snapshot_interval(
         model=model,
         previous_snapshot=previous_snapshot,
@@ -68,6 +71,8 @@ def _build_total_sample(
     collector: EmissionCollector,
     vehicle_samples: dict[str, EmissionSample],
 ) -> EmissionSample:
+    # TODO: once link-level rollups arrive, this total builder will probably
+    # want to return a bit more than just pollutant totals and distance.
     return EmissionSample(
         pollutants_g=dict(collector.total_pollutants_g),
         distance_m=sum(sample.distance_m for sample in vehicle_samples.values()),
