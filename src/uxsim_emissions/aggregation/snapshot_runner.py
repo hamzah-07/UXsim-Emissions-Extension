@@ -26,6 +26,29 @@ def run_average_speed_snapshot_interval(
     )
 
 
+def run_average_speed_snapshot_sequence(
+    *,
+    model: AverageSpeedCO2Model,
+    snapshots: list[WorldObservationSnapshot],
+) -> list[SnapshotIntervalEmissionResult]:
+    # Keep this simple for now: walk the snapshots in order and reuse the
+    # existing single-interval path for each neighbouring pair.
+    if len(snapshots) < 2:
+        return []
+
+    results: list[SnapshotIntervalEmissionResult] = []
+    for previous_snapshot, current_snapshot in zip(snapshots, snapshots[1:]):
+        results.append(
+            run_average_speed_snapshot_interval(
+                model=model,
+                previous_snapshot=previous_snapshot,
+                current_snapshot=current_snapshot,
+            )
+        )
+
+    return results
+
+
 def _run_snapshot_interval(
     *,
     model: AverageSpeedCO2Model,

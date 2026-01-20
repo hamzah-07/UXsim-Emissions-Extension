@@ -11,7 +11,10 @@ if str(SRC_PATH) not in sys.path:
     sys.path.insert(0, str(SRC_PATH))
 
 from experiments.minimal_uxsim_smoke import build_smoke_world
-from uxsim_emissions.aggregation import run_average_speed_snapshot_interval
+from uxsim_emissions.aggregation import (
+    run_average_speed_snapshot_interval,
+    run_average_speed_snapshot_sequence,
+)
 from uxsim_emissions.factors import load_average_speed_factor_table
 from uxsim_emissions.integration import UXsimAdapter
 from uxsim_emissions.models import AverageSpeedCO2Model
@@ -69,6 +72,44 @@ class SnapshotRunnerTestCase(unittest.TestCase):
         self.assertEqual(result.vehicle_samples, {})
         self.assertEqual(result.total_sample.pollutants_g, {})
         self.assertEqual(result.total_sample.distance_m, 0)
+
+    def test_runs_multiple_consecutive_snapshot_intervals(self) -> None:
+        world, _, _ = build_smoke_world()
+        adapter = UXsimAdapter()
+
+        snapshots = []
+        world.exec_simulation(duration_t2=4)
+        snapshots.append(adapter.capture_snapshot(world))
+        world.exec_simulation(duration_t2=1)
+        snapshots.append(adapter.capture_snapshot(world))
+        world.exec_simulation(duration_t2=1)
+        snapshots.append(adapter.capture_snapshot(world))
+
+        results = run_average_speed_snapshot_sequence(
+            model=self.model,
+            snapshots=snapshots,
+        )
+
+        self.assertEqual(len(results), 2)
+        self.assertEqual([result.timestep for result in results], [5, 6])
+        self.assertAlmostEqual(results[0].total_sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertAlmostEqual(results[1].total_sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertEqual(results[0].total_sample.distance_m, 10.0)
+        self.assertEqual(results[1].total_sample.distance_m, 10.0)
+
+    def test_returns_empty_sequence_when_there_are_not_enough_snapshots(self) -> None:
+        world, _, _ = build_smoke_world()
+        adapter = UXsimAdapter()
+
+        world.exec_simulation(duration_t2=4)
+        snapshots = [adapter.capture_snapshot(world)]
+
+        results = run_average_speed_snapshot_sequence(
+            model=self.model,
+            snapshots=snapshots,
+        )
+
+        self.assertEqual(results, [])
 
 
 if __name__ == "__main__":
