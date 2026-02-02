@@ -14,6 +14,7 @@ class ExperimentRunner:
     """Prepare the initial state for a baseline experiment run."""
 
     interval_steps: int = 1
+    max_intervals: int = 2
 
     def run(
         self,
@@ -30,7 +31,7 @@ class ExperimentRunner:
         interval_results = []
         log_lines = [f"Scenario: {baseline_scenario.config.name}"]
 
-        for _ in range(2):
+        for _ in range(self.max_intervals):
             if not world.check_simulation_ongoing():
                 break
 

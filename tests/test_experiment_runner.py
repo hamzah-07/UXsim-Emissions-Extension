@@ -74,6 +74,22 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             ],
         )
 
+    def test_runner_respects_max_intervals_cap(self) -> None:
+        runner = ExperimentRunner(interval_steps=2, max_intervals=1)
+
+        result = runner.run(
+            baseline_scenario=build_baseline_scenario(SCENARIO_CONFIG),
+            model=_build_model(),
+        )
+
+        self.assertEqual(len(result.snapshots), 2)
+        self.assertEqual(len(result.interval_results), 1)
+        self.assertEqual(result.interval_results[0].timestep, 2)
+        self.assertEqual(
+            result.log_lines,
+            ["Scenario: runner-skeleton", "Advanced to timestep 2"],
+        )
+
     def test_runner_rejects_non_positive_interval_steps(self) -> None:
         runner = ExperimentRunner(interval_steps=0)
 
