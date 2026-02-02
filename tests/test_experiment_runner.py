@@ -44,7 +44,7 @@ SCENARIO_CONFIG = ScenarioConfig(
 
 
 class ExperimentRunnerTestCase(unittest.TestCase):
-    def test_runner_returns_initial_snapshot_and_log_line(self) -> None:
+    def test_runner_advances_once_and_appends_snapshot(self) -> None:
         runner = ExperimentRunner(interval_steps=2)
 
         result = runner.run(
@@ -54,9 +54,14 @@ class ExperimentRunnerTestCase(unittest.TestCase):
 
         self.assertIsInstance(result, ExperimentRunResult)
         self.assertEqual(result.scenario_name, "runner-skeleton")
-        self.assertEqual(len(result.snapshots), 1)
+        self.assertEqual(len(result.snapshots), 2)
+        self.assertIsNone(result.snapshots[0].timestep)
+        self.assertEqual(result.snapshots[1].timestep, 2)
         self.assertEqual(result.interval_results, [])
-        self.assertEqual(result.log_lines, ["Scenario: runner-skeleton"])
+        self.assertEqual(
+            result.log_lines,
+            ["Scenario: runner-skeleton", "Advanced by 2 timestep(s)"],
+        )
 
     def test_runner_rejects_non_positive_interval_steps(self) -> None:
         runner = ExperimentRunner(interval_steps=0)

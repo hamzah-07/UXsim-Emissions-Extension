@@ -25,8 +25,18 @@ class ExperimentRunner:
         if self.interval_steps <= 0:
             raise ValueError("interval_steps must be positive")
 
+        world = baseline_scenario.world
+        adapter = baseline_scenario.adapter
+        snapshots = [baseline_scenario.initial_snapshot]
+        log_lines = [f"Scenario: {baseline_scenario.config.name}"]
+
+        if world.check_simulation_ongoing():
+            world.exec_simulation(duration_t2=self.interval_steps)
+            snapshots.append(adapter.capture_snapshot(world))
+            log_lines.append(f"Advanced by {self.interval_steps} timestep(s)")
+
         return ExperimentRunResult(
             scenario_name=baseline_scenario.config.name,
-            snapshots=[baseline_scenario.initial_snapshot],
-            log_lines=[f"Scenario: {baseline_scenario.config.name}"],
+            snapshots=snapshots,
+            log_lines=log_lines,
         )
