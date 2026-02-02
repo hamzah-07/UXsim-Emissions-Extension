@@ -57,7 +57,8 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertEqual(len(result.snapshots), 2)
         self.assertIsNone(result.snapshots[0].timestep)
         self.assertEqual(result.snapshots[1].timestep, 2)
-        self.assertEqual(result.interval_results, [])
+        self.assertEqual(len(result.interval_results), 1)
+        self.assertEqual(result.interval_results[0].timestep, 2)
         self.assertEqual(
             result.log_lines,
             ["Scenario: runner-skeleton", "Advanced by 2 timestep(s)"],
