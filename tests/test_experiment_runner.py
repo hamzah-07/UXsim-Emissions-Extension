@@ -44,7 +44,7 @@ SCENARIO_CONFIG = ScenarioConfig(
 
 
 class ExperimentRunnerTestCase(unittest.TestCase):
-    def test_runner_advances_once_and_appends_snapshot(self) -> None:
+    def test_runner_advances_twice_and_collects_second_interval(self) -> None:
         runner = ExperimentRunner(interval_steps=2)
 
         result = runner.run(
@@ -54,14 +54,24 @@ class ExperimentRunnerTestCase(unittest.TestCase):
 
         self.assertIsInstance(result, ExperimentRunResult)
         self.assertEqual(result.scenario_name, "runner-skeleton")
-        self.assertEqual(len(result.snapshots), 2)
+        self.assertEqual(len(result.snapshots), 3)
         self.assertIsNone(result.snapshots[0].timestep)
         self.assertEqual(result.snapshots[1].timestep, 2)
-        self.assertEqual(len(result.interval_results), 1)
+        self.assertEqual(result.snapshots[2].timestep, 4)
+        self.assertEqual(len(result.interval_results), 2)
         self.assertEqual(result.interval_results[0].timestep, 2)
+        self.assertEqual(result.interval_results[1].timestep, 4)
+        self.assertGreater(
+            result.interval_results[1].total_sample.pollutants_g.get("co2", 0.0),
+            0.0,
+        )
         self.assertEqual(
             result.log_lines,
-            ["Scenario: runner-skeleton", "Advanced by 2 timestep(s)"],
+            [
+                "Scenario: runner-skeleton",
+                "Advanced to timestep 2",
+                "Advanced to timestep 4",
+            ],
         )
 
     def test_runner_rejects_non_positive_interval_steps(self) -> None:

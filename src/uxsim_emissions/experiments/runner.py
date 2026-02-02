@@ -32,7 +32,8 @@ class ExperimentRunner:
 
         if world.check_simulation_ongoing():
             world.exec_simulation(duration_t2=self.interval_steps)
-            snapshots.append(adapter.capture_snapshot(world))
+            current_snapshot = adapter.capture_snapshot(world)
+            snapshots.append(current_snapshot)
             # The first interval can still be empty if vehicles only appear
             # once the simulation has started, which is fine at this stage.
             interval_results.append(
@@ -42,7 +43,20 @@ class ExperimentRunner:
                     current_snapshot=snapshots[1],
                 )
             )
-            log_lines.append(f"Advanced by {self.interval_steps} timestep(s)")
+            log_lines.append(f"Advanced to timestep {current_snapshot.timestep}")
+
+        if world.check_simulation_ongoing():
+            world.exec_simulation(duration_t2=self.interval_steps)
+            current_snapshot = adapter.capture_snapshot(world)
+            snapshots.append(current_snapshot)
+            interval_results.append(
+                run_average_speed_snapshot_interval(
+                    model=model,
+                    previous_snapshot=snapshots[1],
+                    current_snapshot=snapshots[2],
+                )
+            )
+            log_lines.append(f"Advanced to timestep {current_snapshot.timestep}")
 
         return ExperimentRunResult(
             scenario_name=baseline_scenario.config.name,
