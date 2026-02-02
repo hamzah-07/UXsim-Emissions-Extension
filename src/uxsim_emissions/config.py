@@ -15,10 +15,62 @@ class LoggingConfig:
 
 
 @dataclass(slots=True)
+class NodeConfig:
+    """Minimal node definition for a reusable scenario."""
+
+    name: str
+    x: float
+    y: float
+    signal: tuple[float, ...] = (0.0,)
+    flow_capacity: float | None = None
+
+
+@dataclass(slots=True)
+class LinkConfig:
+    """Minimal link definition for a reusable scenario."""
+
+    name: str
+    start_node: str
+    end_node: str
+    length_m: float
+    free_flow_speed_mps: float = 20.0
+    jam_density: float = 0.2
+    number_of_lanes: int = 1
+    signal_group: tuple[int, ...] = (0,)
+
+
+@dataclass(slots=True)
+class DemandConfig:
+    """Simple origin-destination demand definition."""
+
+    origin: str
+    destination: str
+    departure_times_s: tuple[float, ...]
+    vehicle_type: str = "passenger_car"
+
+
+@dataclass(slots=True)
+class ScenarioConfig:
+    """Configuration for a reusable UXsim scenario."""
+
+    name: str
+    nodes: list[NodeConfig]
+    links: list[LinkConfig]
+    demands: list[DemandConfig]
+    tmax_s: float = 300.0
+    deltan: int = 1
+    random_seed: int = 42
+    print_mode: int = 0
+    save_mode: int = 0
+    show_mode: int = 0
+    show_progress: int = 0
+    vehicle_logging_timestep_interval: int = 1
+
+
+@dataclass(slots=True)
 class ProjectConfig:
     """Top-level project settings used across experiments."""
 
     random_seed: int = 42
     timestep_seconds: float = 1.0
     logging: LoggingConfig = field(default_factory=LoggingConfig)
-
