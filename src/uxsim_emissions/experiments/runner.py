@@ -30,7 +30,10 @@ class ExperimentRunner:
         interval_results = []
         log_lines = [f"Scenario: {baseline_scenario.config.name}"]
 
-        if world.check_simulation_ongoing():
+        for _ in range(2):
+            if not world.check_simulation_ongoing():
+                break
+
             world.exec_simulation(duration_t2=self.interval_steps)
             current_snapshot = adapter.capture_snapshot(world)
             snapshots.append(current_snapshot)
@@ -39,21 +42,8 @@ class ExperimentRunner:
             interval_results.append(
                 run_average_speed_snapshot_interval(
                     model=model,
-                    previous_snapshot=snapshots[0],
-                    current_snapshot=snapshots[1],
-                )
-            )
-            log_lines.append(f"Advanced to timestep {current_snapshot.timestep}")
-
-        if world.check_simulation_ongoing():
-            world.exec_simulation(duration_t2=self.interval_steps)
-            current_snapshot = adapter.capture_snapshot(world)
-            snapshots.append(current_snapshot)
-            interval_results.append(
-                run_average_speed_snapshot_interval(
-                    model=model,
-                    previous_snapshot=snapshots[1],
-                    current_snapshot=snapshots[2],
+                    previous_snapshot=snapshots[-2],
+                    current_snapshot=snapshots[-1],
                 )
             )
             log_lines.append(f"Advanced to timestep {current_snapshot.timestep}")
