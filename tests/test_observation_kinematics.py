@@ -37,17 +37,40 @@ class ObservationKinematicsTestCase(unittest.TestCase):
                 current_observation=_build_observation(speed_mps=12.0, time_s=4.0),
             )
 
+    def test_helper_rejects_mismatched_vehicle_ids(self) -> None:
+        with self.assertRaises(ValueError):
+            derive_acceleration_mps2(
+                previous_observation=_build_observation(speed_mps=8.0, time_s=2.0),
+                current_observation=_build_observation(
+                    speed_mps=12.0,
+                    time_s=4.0,
+                    vehicle_id="veh_1",
+                ),
+            )
 
-def _build_observation(*, speed_mps: float, time_s: float) -> VehicleObservation:
+    def test_helper_rejects_missing_time_values(self) -> None:
+        with self.assertRaises(ValueError):
+            derive_acceleration_mps2(
+                previous_observation=_build_observation(speed_mps=8.0, time_s=None),
+                current_observation=_build_observation(speed_mps=12.0, time_s=4.0),
+            )
+
+
+def _build_observation(
+    *,
+    speed_mps: float,
+    time_s: float | None,
+    vehicle_id: str = "veh_0",
+) -> VehicleObservation:
     return VehicleObservation(
-        vehicle_id="veh_0",
+        vehicle_id=vehicle_id,
         state="run",
         link_id="orig_dest",
         position_m=0.0,
         speed_mps=speed_mps,
         acceleration_mps2=None,
         distance_traveled_m=0.0,
-        timestep=int(time_s),
+        timestep=0 if time_s is None else int(time_s),
         time_s=time_s,
     )
 
