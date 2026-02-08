@@ -1,0 +1,3 @@
+vehicle_type,pollutant,coeff_constant,coeff_speed,coeff_acceleration
+passenger_car,co2,1.2,0.08,0.15
+light_van,co2,1.6,0.11,0.19
