@@ -22,16 +22,40 @@ class SpeedAccelerationModelTestCase(unittest.TestCase):
         self.assertEqual(model.pollutant, "co2")
         self.assertEqual(model.name, "speed_acceleration_co2")
 
-    def test_model_compute_is_not_implemented_yet(self) -> None:
+    def test_model_computes_emissions_for_direct_inputs(self) -> None:
         model = SpeedAccelerationCO2Model(factor_table=_build_table())
 
-        with self.assertRaises(NotImplementedError):
-            model.compute(speed_mps=10.0, acceleration_mps2=1.0, distance_m=5.0)
+        sample = model.compute(speed_mps=10.0, acceleration_mps2=1.0, distance_m=50.0)
+
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 0.11)
+        self.assertEqual(sample.distance_m, 50.0)
+
+    def test_model_uses_vehicle_type_override_from_metadata(self) -> None:
+        model = SpeedAccelerationCO2Model(factor_table=_build_table())
+
+        sample = model.compute(
+            speed_mps=10.0,
+            acceleration_mps2=1.0,
+            distance_m=50.0,
+            metadata={"vehicle_type": "light_van"},
+        )
+
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 0.215)
+
+    def test_model_treats_missing_acceleration_as_zero(self) -> None:
+        model = SpeedAccelerationCO2Model(factor_table=_build_table())
+
+        sample = model.compute(speed_mps=10.0, acceleration_mps2=None, distance_m=50.0)
+
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 0.1)
 
 
 def _build_table() -> SpeedAccelerationFactorTable:
     return SpeedAccelerationFactorTable(
-        factors=[SpeedAccelerationFactor("passenger_car", "co2", 1.0, 0.1, 0.2)]
+        factors=[
+            SpeedAccelerationFactor("passenger_car", "co2", 1.0, 0.1, 0.2),
+            SpeedAccelerationFactor("light_van", "co2", 2.0, 0.2, 0.3),
+        ]
     )
 
 
