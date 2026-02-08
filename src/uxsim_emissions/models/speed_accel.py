@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from typing import Mapping
 
 from uxsim_emissions.factors import SpeedAccelerationFactorTable
+from uxsim_emissions.integration import derive_acceleration_mps2
+from uxsim_emissions.integration.uxsim_adapter import VehicleObservation
 
 from .base import EmissionModel, EmissionSample
 
@@ -52,6 +54,36 @@ class SpeedAccelerationCO2Model(EmissionModel):
             distance_m=distance_m,
         )
 
+    def compute_from_observation_pair(
+        self,
+        *,
+        previous_observation: VehicleObservation,
+        current_observation: VehicleObservation,
+        metadata: Mapping[str, object] | None = None,
+    ) -> EmissionSample:
+        if previous_observation.time_s is None or current_observation.time_s is None:
+            raise ValueError("Observation pair must include time_s values")
+
+        delta_time_s = current_observation.time_s - previous_observation.time_s
+        if delta_time_s <= 0:
+            raise ValueError("Observation pair must have a positive elapsed time")
+
+        acceleration_mps2 = derive_acceleration_mps2(
+            previous_observation=previous_observation,
+            current_observation=current_observation,
+        )
+        distance_m = _distance_from_observation_pair(
+            previous_observation=previous_observation,
+            current_observation=current_observation,
+            delta_time_s=delta_time_s,
+        )
+        return self.compute(
+            speed_mps=current_observation.speed_mps,
+            acceleration_mps2=acceleration_mps2,
+            distance_m=distance_m,
+            metadata=metadata,
+        )
+
     def _factor_for_vehicle_type(self, *, vehicle_type: str):
         factors = self.factor_table.factors_for(
             vehicle_type=vehicle_type,
@@ -66,3 +98,30 @@ class SpeedAccelerationCO2Model(EmissionModel):
                 f"Expected one {self.pollutant} speed-acceleration factor for vehicle_type={vehicle_type!r}"
             )
         return factors[0]
+
+
+def _distance_from_observation_pair(
+    *,
+    previous_observation: VehicleObservation,
+    current_observation: VehicleObservation,
+    delta_time_s: float,
+) -> float:
+    distance_delta_m = (
+        current_observation.distance_traveled_m - previous_observation.distance_traveled_m
+    )
+    if distance_delta_m > 0:
+        return distance_delta_m
+
+    if (
+        previous_observation.link_id is not None
+        and previous_observation.link_id == current_observation.link_id
+        and current_observation.position_m >= previous_observation.position_m
+    ):
+        position_delta_m = current_observation.position_m - previous_observation.position_m
+        if position_delta_m > 0:
+            return position_delta_m
+
+    average_speed_mps = (
+        previous_observation.speed_mps + current_observation.speed_mps
+    ) / 2.0
+    return max(0.0, average_speed_mps * delta_time_s)
