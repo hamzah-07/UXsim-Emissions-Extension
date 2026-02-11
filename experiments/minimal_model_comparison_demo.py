@@ -22,6 +22,8 @@ from uxsim_emissions.models import AverageSpeedCO2Model, SpeedAccelerationCO2Mod
 def build_model_comparison_summary() -> list[str]:
     world, _, _ = build_smoke_world()
     adapter = UXsimAdapter()
+    # The point here is not which number is "right" yet, only that both model
+    # paths can read the same interval and give us something comparable.
     average_speed_model = AverageSpeedCO2Model(
         load_average_speed_factor_table(
             PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"

@@ -40,6 +40,9 @@ class SpeedAccelerationCO2Model(EmissionModel):
 
         factor = self._factor_for_vehicle_type(vehicle_type=vehicle_type)
         acceleration_mps2 = 0.0 if acceleration_mps2 is None else acceleration_mps2
+        # Keep the first pass straightforward: evaluate the coefficient
+        # surface directly in SI units, then clamp back to zero if the starter
+        # coefficients dip below a sensible emission rate.
         emission_rate_g_per_km = max(
             0.0,
             factor.coeff_constant
@@ -77,6 +80,8 @@ class SpeedAccelerationCO2Model(EmissionModel):
             current_observation=current_observation,
             delta_time_s=delta_time_s,
         )
+        # Use the current speed with the interval acceleration so this reads a
+        # bit more like an instantaneous update than the average-speed path.
         return self.compute(
             speed_mps=current_observation.speed_mps,
             acceleration_mps2=acceleration_mps2,
@@ -106,6 +111,8 @@ def _distance_from_observation_pair(
     current_observation: VehicleObservation,
     delta_time_s: float,
 ) -> float:
+    # Mirror the average-speed distance hints for now so the two model paths
+    # stay comparable while the richer data layer is still bedding in.
     distance_delta_m = (
         current_observation.distance_traveled_m - previous_observation.distance_traveled_m
     )

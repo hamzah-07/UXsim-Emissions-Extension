@@ -19,6 +19,8 @@ from uxsim_emissions.models import SpeedAccelerationCO2Model
 def build_speed_acceleration_demo_summary() -> list[str]:
     world, _, _ = build_smoke_world()
     adapter = UXsimAdapter()
+    # This still uses the tiny starter coefficient table, so treat it as a
+    # wiring check rather than a calibrated emissions claim.
     factor_table = load_speed_acceleration_factor_table(
         PROJECT_ROOT
         / "data"
