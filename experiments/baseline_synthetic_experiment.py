@@ -12,22 +12,40 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from uxsim_emissions import DemandConfig, LinkConfig, NodeConfig, ScenarioConfig
 from uxsim_emissions.experiments import ExperimentRunner, build_experiment_summary_lines
-from uxsim_emissions.factors import load_average_speed_factor_table
+from uxsim_emissions.factors import (
+    load_average_speed_factor_table,
+    load_speed_acceleration_factor_table,
+)
 from uxsim_emissions.integration import build_baseline_scenario
-from uxsim_emissions.models import AverageSpeedCO2Model
+from uxsim_emissions.models import AverageSpeedCO2Model, SpeedAccelerationCO2Model
 
 
-def build_baseline_experiment_summary() -> list[str]:
+def build_baseline_experiment_summary(model_kind: str = "average_speed") -> list[str]:
     """Run the small synthetic baseline example and return summary lines."""
 
-    factor_table = load_average_speed_factor_table(
-        PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
-    )
-    model = AverageSpeedCO2Model(factor_table=factor_table)
+    model = _build_model(model_kind)
     runner = ExperimentRunner(interval_steps=2, max_intervals=3)
     scenario = build_baseline_scenario(_scenario_config())
     result = runner.run(baseline_scenario=scenario, model=model)
-    return build_experiment_summary_lines(result)
+    return [f"Model: {model.name}", *build_experiment_summary_lines(result)]
+
+
+def _build_model(model_kind: str) -> AverageSpeedCO2Model | SpeedAccelerationCO2Model:
+    if model_kind == "average_speed":
+        factor_table = load_average_speed_factor_table(
+            PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
+        )
+        return AverageSpeedCO2Model(factor_table=factor_table)
+    if model_kind == "speed_acceleration":
+        factor_table = load_speed_acceleration_factor_table(
+            PROJECT_ROOT
+            / "data"
+            / "emission_factors"
+            / "starter_speed_acceleration_co2_factors.csv"
+        )
+        return SpeedAccelerationCO2Model(factor_table=factor_table)
+
+    raise ValueError(f"Unsupported model_kind: {model_kind}")
 
 
 def _scenario_config() -> ScenarioConfig:

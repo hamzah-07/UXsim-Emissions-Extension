@@ -18,11 +18,20 @@ class BaselineSyntheticExperimentTestCase(unittest.TestCase):
         lines = build_baseline_experiment_summary()
         output = "\n".join(lines)
 
+        self.assertIn("Model: average_speed_co2", output)
         self.assertIn("Scenario: baseline-two-link", output)
         self.assertIn("Snapshots captured:", output)
         self.assertIn("Intervals computed:", output)
         self.assertIn("Total CO2:", output)
         self.assertIn("- Interval", output)
+
+    def test_script_can_run_speed_acceleration_path(self) -> None:
+        lines = build_baseline_experiment_summary(model_kind="speed_acceleration")
+        output = "\n".join(lines)
+
+        self.assertIn("Model: speed_acceleration_co2", output)
+        self.assertIn("Scenario: baseline-two-link", output)
+        self.assertIn("Total CO2:", output)
 
 
 if __name__ == "__main__":
