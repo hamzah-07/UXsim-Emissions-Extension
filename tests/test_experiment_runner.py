@@ -12,12 +12,21 @@ if str(SRC_PATH) not in sys.path:
 
 from uxsim_emissions import DemandConfig, LinkConfig, NodeConfig, ScenarioConfig
 from uxsim_emissions.experiments import ExperimentRunResult, ExperimentRunner
-from uxsim_emissions.factors import load_average_speed_factor_table
+from uxsim_emissions.factors import (
+    load_average_speed_factor_table,
+    load_speed_acceleration_factor_table,
+)
 from uxsim_emissions.integration import build_baseline_scenario
-from uxsim_emissions.models import AverageSpeedCO2Model
+from uxsim_emissions.models import AverageSpeedCO2Model, SpeedAccelerationCO2Model
 
 FACTOR_TABLE_PATH = (
     PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
+)
+SPEED_ACCEL_FACTOR_TABLE_PATH = (
+    PROJECT_ROOT
+    / "data"
+    / "emission_factors"
+    / "starter_speed_acceleration_co2_factors.csv"
 )
 SCENARIO_CONFIG = ScenarioConfig(
     name="runner-skeleton",
@@ -90,6 +99,21 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             ["Scenario: runner-skeleton", "Advanced to timestep 2"],
         )
 
+    def test_runner_supports_speed_acceleration_model(self) -> None:
+        runner = ExperimentRunner(interval_steps=2)
+
+        result = runner.run(
+            baseline_scenario=build_baseline_scenario(SCENARIO_CONFIG),
+            model=_build_speed_accel_model(),
+        )
+
+        self.assertEqual(len(result.snapshots), 3)
+        self.assertEqual(len(result.interval_results), 2)
+        self.assertGreater(
+            result.interval_results[1].total_sample.pollutants_g.get("co2", 0.0),
+            0.0,
+        )
+
     def test_runner_rejects_non_positive_interval_steps(self) -> None:
         runner = ExperimentRunner(interval_steps=0)
 
@@ -103,6 +127,11 @@ class ExperimentRunnerTestCase(unittest.TestCase):
 def _build_model() -> AverageSpeedCO2Model:
     factor_table = load_average_speed_factor_table(FACTOR_TABLE_PATH)
     return AverageSpeedCO2Model(factor_table=factor_table)
+
+
+def _build_speed_accel_model() -> SpeedAccelerationCO2Model:
+    factor_table = load_speed_acceleration_factor_table(SPEED_ACCEL_FACTOR_TABLE_PATH)
+    return SpeedAccelerationCO2Model(factor_table=factor_table)
 
 
 if __name__ == "__main__":
