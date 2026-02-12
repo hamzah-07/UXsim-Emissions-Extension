@@ -1,0 +1,28 @@
+"""Checks for the richer baseline comparison script."""
+
+from pathlib import Path
+import sys
+import unittest
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_PATH = PROJECT_ROOT / "src"
+
+if str(SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(SRC_PATH))
+
+from experiments.baseline_model_comparison import build_baseline_model_comparison_summary
+
+
+class BaselineModelComparisonTestCase(unittest.TestCase):
+    def test_comparison_summary_contains_expected_lines(self) -> None:
+        lines = build_baseline_model_comparison_summary()
+        output = "\n".join(lines)
+
+        self.assertIn("Scenario: baseline-two-link", output)
+        self.assertIn("Average-speed CO2: 10.86 g", output)
+        self.assertIn("Speed-acceleration CO2: 0.12 g", output)
+        self.assertIn("Difference: -10.74 g", output)
+
+
+if __name__ == "__main__":
+    unittest.main()
