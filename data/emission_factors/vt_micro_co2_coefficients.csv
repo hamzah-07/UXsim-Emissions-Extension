@@ -1,0 +1,3 @@
+vehicle_type,pollutant,regime,c00,c01,c02,c03,c10,c11,c12,c13,c20,c21,c22,c23,c30,c31,c32,c33
+passenger_car,co2,non_negative_acceleration,6.916,0.217,2.354e-4,-3.639e-4,-0.02754,-9.68e-3,-1.75e-3,8.35e-5,-2.070e-4,-1.0138e-4,1.966e-5,-1.02e-6,9.80e-7,3.66e-7,-1.08e-7,8.50e-9
+passenger_car,co2,negative_acceleration,6.915,-0.032,9.17e-3,-2.88e-4,0.0284,8.53e-3,1.15e-3,-3.06e-6,-2.26e-4,-6.594e-5,-1.289e-5,-2.68e-7,1.11e-6,3.20e-7,7.56e-8,2.95e-9
