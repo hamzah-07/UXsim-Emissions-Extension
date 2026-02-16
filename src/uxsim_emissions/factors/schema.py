@@ -1,6 +1,20 @@
 """Data shapes for emission factor tables."""
 
 from dataclasses import dataclass
+from enum import StrEnum
+
+
+class VTMicroRegime(StrEnum):
+    """Acceleration regime used to select a VT-Micro coefficient surface."""
+
+    NON_NEGATIVE_ACCELERATION = "non_negative_acceleration"
+    NEGATIVE_ACCELERATION = "negative_acceleration"
+
+    @classmethod
+    def for_acceleration(cls, acceleration_mps2: float) -> "VTMicroRegime":
+        if acceleration_mps2 < 0:
+            return cls.NEGATIVE_ACCELERATION
+        return cls.NON_NEGATIVE_ACCELERATION
 
 
 @dataclass(slots=True, frozen=True)
