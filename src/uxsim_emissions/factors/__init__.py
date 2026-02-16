@@ -10,6 +10,7 @@ from .schema import (
     SpeedAccelerationFactor,
     SpeedAccelerationFactorTable,
     VTMicroCoefficientSurface,
+    VTMicroFactorTable,
     VTMicroRegime,
 )
 
@@ -19,6 +20,7 @@ __all__ = [
     "SpeedAccelerationFactor",
     "SpeedAccelerationFactorTable",
     "VTMicroCoefficientSurface",
+    "VTMicroFactorTable",
     "VTMicroRegime",
     "load_average_speed_factor_table",
     "load_speed_acceleration_factor_table",

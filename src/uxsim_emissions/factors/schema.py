@@ -39,6 +39,39 @@ class VTMicroCoefficientSurface:
         return self.coefficients[speed_power][acceleration_power]
 
 
+@dataclass(slots=True)
+class VTMicroFactorTable:
+    """Collection of VT-Micro coefficient surfaces keyed by regime."""
+
+    surfaces: list[VTMicroCoefficientSurface]
+
+    def surface_for(
+        self,
+        *,
+        vehicle_type: str,
+        pollutant: str = "co2",
+        regime: VTMicroRegime,
+    ) -> VTMicroCoefficientSurface:
+        matching_surfaces = [
+            surface
+            for surface in self.surfaces
+            if surface.vehicle_type == vehicle_type
+            and surface.pollutant == pollutant
+            and surface.regime == regime
+        ]
+        if not matching_surfaces:
+            raise ValueError(
+                "No VT-Micro coefficient surface found for "
+                f"vehicle_type={vehicle_type!r}, pollutant={pollutant!r}, regime={regime.value!r}"
+            )
+        if len(matching_surfaces) > 1:
+            raise ValueError(
+                "Expected one VT-Micro coefficient surface for "
+                f"vehicle_type={vehicle_type!r}, pollutant={pollutant!r}, regime={regime.value!r}"
+            )
+        return matching_surfaces[0]
+
+
 @dataclass(slots=True, frozen=True)
 class AverageSpeedFactor:
     """One average-speed emission factor entry."""
