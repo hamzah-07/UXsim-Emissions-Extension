@@ -12,4 +12,11 @@ The current `starter_average_speed_co2_factors.csv` file is only a small tracked
 starter table for loader and model integration work. It should be replaced or expanded
 with literature-backed factors before final experiments and evaluation.
 
+The current `vt_micro_co2_coefficients.csv` file stores VT-Micro surfaces in the
+repo's own CSV layout so they are easy to load and diff. That layout is our
+implementation choice, not the original table format from the VT-Micro papers.
+The coefficient values are source-backed enough for ongoing implementation work,
+but should still be checked against the original Rakha et al. source before we
+treat the dataset as final.
+
 Generated experiment outputs should go to `outputs/`, which is ignored by Git.
