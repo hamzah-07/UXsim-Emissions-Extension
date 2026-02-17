@@ -3,6 +3,7 @@
 from .loader import (
     load_average_speed_factor_table,
     load_speed_acceleration_factor_table,
+    load_vt_micro_factor_table,
 )
 from .schema import (
     AverageSpeedFactor,
@@ -24,4 +25,5 @@ __all__ = [
     "VTMicroRegime",
     "load_average_speed_factor_table",
     "load_speed_acceleration_factor_table",
+    "load_vt_micro_factor_table",
 ]
