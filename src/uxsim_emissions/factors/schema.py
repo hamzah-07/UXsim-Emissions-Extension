@@ -26,8 +26,8 @@ class VTMicroCoefficientSurface:
     regime: VTMicroRegime
     coefficients: tuple[tuple[float, float, float, float], ...]
     speed_unit: str = "kph"
-    acceleration_unit: str = "mps2"
-    emission_rate_unit: str = "g_per_s"
+    acceleration_unit: str = "kph_per_s"
+    emission_rate_unit: str = "mg_per_s"
 
     def __post_init__(self) -> None:
         if len(self.coefficients) != 4 or any(

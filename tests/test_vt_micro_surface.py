@@ -23,6 +23,8 @@ class VTMicroCoefficientSurfaceTestCase(unittest.TestCase):
         )
 
         self.assertEqual(surface.coefficient(speed_power=2, acceleration_power=1), 10.0)
+        self.assertEqual(surface.acceleration_unit, "kph_per_s")
+        self.assertEqual(surface.emission_rate_unit, "mg_per_s")
 
     def test_surface_rejects_non_4x4_coefficients(self) -> None:
         with self.assertRaisesRegex(ValueError, "must be 4x4"):
