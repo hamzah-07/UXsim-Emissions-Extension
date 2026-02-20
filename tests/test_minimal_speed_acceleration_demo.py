@@ -23,8 +23,8 @@ class MinimalSpeedAccelerationDemoTestCase(unittest.TestCase):
         self.assertIn("Scenario: minimal-smoke", output)
         self.assertIn("Interval: timestep 5 at 5 s", output)
         self.assertIn("Derived acceleration: 0.00 m/s^2", output)
-        self.assertIn("Total CO2: 0.02 g over 10.0 m", output)
-        self.assertIn("- veh_0: 0.02 g CO2 over 10.0 m", output)
+        self.assertIn("Total CO2: 0.30 g over 10.0 m", output)
+        self.assertIn("- veh_0: 0.30 g CO2 over 10.0 m", output)
 
 
 if __name__ == "__main__":

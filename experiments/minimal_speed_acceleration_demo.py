@@ -11,7 +11,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from experiments.minimal_uxsim_smoke import build_smoke_world
-from uxsim_emissions.factors import load_speed_acceleration_factor_table
+from uxsim_emissions.factors import load_vt_micro_factor_table
 from uxsim_emissions.integration import UXsimAdapter, derive_acceleration_mps2
 from uxsim_emissions.models import SpeedAccelerationCO2Model
 
@@ -19,13 +19,13 @@ from uxsim_emissions.models import SpeedAccelerationCO2Model
 def build_speed_acceleration_demo_summary() -> list[str]:
     world, _, _ = build_smoke_world()
     adapter = UXsimAdapter()
-    # This still uses the tiny starter coefficient table, so treat it as a
-    # wiring check rather than a calibrated emissions claim.
-    factor_table = load_speed_acceleration_factor_table(
+    # This now uses the tracked VT-Micro table, but the coefficients should
+    # still be treated as provisional until we verify them against Rakha et al.
+    factor_table = load_vt_micro_factor_table(
         PROJECT_ROOT
         / "data"
         / "emission_factors"
-        / "starter_speed_acceleration_co2_factors.csv"
+        / "vt_micro_co2_coefficients.csv"
     )
     model = SpeedAccelerationCO2Model(factor_table=factor_table)
 
