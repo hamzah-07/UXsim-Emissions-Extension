@@ -81,15 +81,25 @@ class SpeedAccelerationModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(sample.pollutants_g["co2"], 2.5)
 
     def test_model_computes_from_observation_pair(self) -> None:
-        model = SpeedAccelerationCO2Model(factor_table=_build_table())
+        model = SpeedAccelerationCO2Model(factor_table=_build_vt_micro_table())
 
         sample = model.compute_from_observation_pair(
             previous_observation=_build_observation(speed_mps=8.0, time_s=2.0, distance_m=10.0),
             current_observation=_build_observation(speed_mps=12.0, time_s=4.0, distance_m=30.0),
         )
 
-        self.assertAlmostEqual(sample.pollutants_g["co2"], 0.052)
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 4.0)
         self.assertEqual(sample.distance_m, 20.0)
+
+    def test_model_uses_negative_acceleration_surface_from_observation_pair(self) -> None:
+        model = SpeedAccelerationCO2Model(factor_table=_build_vt_micro_table())
+
+        sample = model.compute_from_observation_pair(
+            previous_observation=_build_observation(speed_mps=12.0, time_s=2.0, distance_m=10.0),
+            current_observation=_build_observation(speed_mps=8.0, time_s=4.0, distance_m=30.0),
+        )
+
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.0)
 
 
 def _build_table() -> SpeedAccelerationFactorTable:

@@ -26,7 +26,7 @@ from .vt_micro_units import (
 
 @dataclass(slots=True)
 class SpeedAccelerationCO2Model(EmissionModel):
-    """Compute CO2 emissions from speed-acceleration coefficients."""
+    """Compute CO2 emissions from speed-acceleration model inputs."""
 
     factor_table: SpeedAccelerationFactorTable | VTMicroFactorTable
     default_vehicle_type: str = "passenger_car"
@@ -52,6 +52,9 @@ class SpeedAccelerationCO2Model(EmissionModel):
             vehicle_type = str(metadata["vehicle_type"])
 
         acceleration_mps2 = 0.0 if acceleration_mps2 is None else acceleration_mps2
+        # VT-Micro is now the main path for this model. The older generic
+        # coefficient table is kept around temporarily so the rest of the repo
+        # can be moved across in smaller steps.
         if isinstance(self.factor_table, VTMicroFactorTable):
             return self._compute_vt_micro(
                 vehicle_type=vehicle_type,
@@ -104,12 +107,13 @@ class SpeedAccelerationCO2Model(EmissionModel):
             current_observation=current_observation,
             delta_time_s=delta_time_s,
         )
-        # Use the current speed with the interval acceleration so this reads a
-        # bit more like an instantaneous update than the average-speed path.
+        # Observation pairs give us a real elapsed interval, which is exactly
+        # what the VT-Micro rate needs when we turn it into emitted mass.
         return self.compute(
             speed_mps=current_observation.speed_mps,
             acceleration_mps2=acceleration_mps2,
             distance_m=distance_m,
+            duration_s=delta_time_s,
             metadata=metadata,
         )
 
@@ -137,12 +141,16 @@ class SpeedAccelerationCO2Model(EmissionModel):
         distance_m: float,
         duration_s: float | None,
     ) -> EmissionSample:
+        # Direct inputs can either give us an explicit interval duration or
+        # leave us to infer it from speed and distance.
         duration_s = resolve_duration_s(
             duration_s=duration_s,
             distance_m=distance_m,
             speed_mps=speed_mps,
         )
         regime = VTMicroRegime.for_acceleration(acceleration_mps2)
+        # VT-Micro uses one surface for non-negative acceleration and another
+        # for deceleration, so the regime split happens here.
         surface = self.factor_table.surface_for(
             vehicle_type=vehicle_type,
             pollutant=self.pollutant,
