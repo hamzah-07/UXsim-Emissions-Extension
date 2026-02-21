@@ -18,5 +18,7 @@ implementation choice, not the original table format from the VT-Micro papers.
 The coefficient values are source-backed enough for ongoing implementation work,
 but should still be checked against the original Rakha et al. source before we
 treat the dataset as final.
+See `docs/vt_micro_provenance.md` for the current provenance note and
+verification checklist tied to the tracked file.
 
 Generated experiment outputs should go to `outputs/`, which is ignored by Git.
