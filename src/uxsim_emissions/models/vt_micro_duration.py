@@ -21,7 +21,6 @@ def resolve_duration_s(
     if speed_mps is None or speed_mps <= 0:
         raise ValueError("speed_mps must be positive when deriving duration_s")
 
-    # VT-Micro gives us a rate over time. When the direct-input path only has
-    # distance and speed to hand, we fall back to a simple constant-speed
-    # duration estimate rather than changing the whole model interface at once.
+    # This fallback is only for direct inputs. Observation pairs should
+    # usually hand us a real elapsed interval instead.
     return distance_m / speed_mps

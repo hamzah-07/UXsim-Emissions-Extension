@@ -52,9 +52,8 @@ class SpeedAccelerationCO2Model(EmissionModel):
             vehicle_type = str(metadata["vehicle_type"])
 
         acceleration_mps2 = 0.0 if acceleration_mps2 is None else acceleration_mps2
-        # VT-Micro is now the main path for this model. The older generic
-        # coefficient table is kept around temporarily so the rest of the repo
-        # can be moved across in smaller steps.
+        # VT-Micro is the main path now. The older table stays around for a
+        # bit so the rest of the repo can catch up without one big rewrite.
         if isinstance(self.factor_table, VTMicroFactorTable):
             return self._compute_vt_micro(
                 vehicle_type=vehicle_type,
@@ -107,8 +106,8 @@ class SpeedAccelerationCO2Model(EmissionModel):
             current_observation=current_observation,
             delta_time_s=delta_time_s,
         )
-        # Observation pairs give us a real elapsed interval, which is exactly
-        # what the VT-Micro rate needs when we turn it into emitted mass.
+        # For VT-Micro, the real elapsed interval matters just as much as the
+        # speed and acceleration values we derive from the pair.
         return self.compute(
             speed_mps=current_observation.speed_mps,
             acceleration_mps2=acceleration_mps2,
@@ -141,23 +140,19 @@ class SpeedAccelerationCO2Model(EmissionModel):
         distance_m: float,
         duration_s: float | None,
     ) -> EmissionSample:
-        # Direct inputs can either give us an explicit interval duration or
-        # leave us to infer it from speed and distance.
         duration_s = resolve_duration_s(
             duration_s=duration_s,
             distance_m=distance_m,
             speed_mps=speed_mps,
         )
         regime = VTMicroRegime.for_acceleration(acceleration_mps2)
-        # VT-Micro uses one surface for non-negative acceleration and another
-        # for deceleration, so the regime split happens here.
         surface = self.factor_table.surface_for(
             vehicle_type=vehicle_type,
             pollutant=self.pollutant,
             regime=regime,
         )
-        # VT-Micro models the log of the instantaneous mass rate, so we
-        # evaluate the surface in VT-Micro units and then exponentiate it.
+        # The surface gives us log(rate), so we evaluate first and exponentiate
+        # afterwards before turning the result into repo output units.
         log_rate = evaluate_vt_micro_log_rate(
             surface=surface,
             speed_kph=speed_mps_to_kph(speed_mps),
@@ -176,14 +171,14 @@ def _distance_from_observation_pair(
     current_observation: VehicleObservation,
     delta_time_s: float,
 ) -> float:
-    # Mirror the average-speed distance hints for now so the two model paths
-    # stay comparable while the richer data layer is still bedding in.
     distance_delta_m = (
         current_observation.distance_traveled_m - previous_observation.distance_traveled_m
     )
     if distance_delta_m > 0:
         return distance_delta_m
 
+    # Same-link position is a decent second choice when the cumulative
+    # distance field is not giving us a clean interval jump.
     if (
         previous_observation.link_id is not None
         and previous_observation.link_id == current_observation.link_id
@@ -193,6 +188,7 @@ def _distance_from_observation_pair(
         if position_delta_m > 0:
             return position_delta_m
 
+    # Last fallback: assume the interval behaved roughly like the mean speed.
     average_speed_mps = (
         previous_observation.speed_mps + current_observation.speed_mps
     ) / 2.0
