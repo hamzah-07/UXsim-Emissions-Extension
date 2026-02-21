@@ -14,7 +14,7 @@ from uxsim_emissions import DemandConfig, LinkConfig, NodeConfig, ScenarioConfig
 from uxsim_emissions.experiments import ExperimentRunner, build_experiment_summary_lines
 from uxsim_emissions.factors import (
     load_average_speed_factor_table,
-    load_speed_acceleration_factor_table,
+    load_vt_micro_factor_table,
 )
 from uxsim_emissions.integration import build_baseline_scenario
 from uxsim_emissions.models import AverageSpeedCO2Model, SpeedAccelerationCO2Model
@@ -37,11 +37,11 @@ def _build_model(model_kind: str) -> AverageSpeedCO2Model | SpeedAccelerationCO2
         )
         return AverageSpeedCO2Model(factor_table=factor_table)
     if model_kind == "speed_acceleration":
-        factor_table = load_speed_acceleration_factor_table(
+        factor_table = load_vt_micro_factor_table(
             PROJECT_ROOT
             / "data"
             / "emission_factors"
-            / "starter_speed_acceleration_co2_factors.csv"
+            / "vt_micro_co2_coefficients.csv"
         )
         return SpeedAccelerationCO2Model(factor_table=factor_table)
 

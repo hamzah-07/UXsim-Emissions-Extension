@@ -51,14 +51,25 @@ def build_model_comparison_summary() -> list[str]:
         previous_observation=previous_observation,
         current_observation=current_observation,
     )
+    average_speed_co2 = float(average_speed_sample.pollutants_g.get("co2", 0.0))
+    speed_accel_co2 = float(speed_accel_sample.pollutants_g.get("co2", 0.0))
 
     return [
         f"Scenario: {world.name}",
         f"Interval: timestep {current_observation.timestep} at {current_observation.time_s} s",
-        f"Average-speed CO2: {float(average_speed_sample.pollutants_g.get('co2', 0.0)):.2f} g",
-        f"Speed-acceleration CO2: {float(speed_accel_sample.pollutants_g.get('co2', 0.0)):.2f} g",
-        f"Difference: {float(speed_accel_sample.pollutants_g.get('co2', 0.0) - average_speed_sample.pollutants_g.get('co2', 0.0)):.2f} g",
+        f"Average-speed CO2: {average_speed_co2:.2f} g",
+        f"Average-speed intensity: {_intensity_g_per_km(average_speed_co2, average_speed_sample.distance_m):.2f} g/km",
+        f"Speed-acceleration CO2: {speed_accel_co2:.2f} g",
+        f"Speed-acceleration intensity: {_intensity_g_per_km(speed_accel_co2, speed_accel_sample.distance_m):.2f} g/km",
+        f"Difference: {speed_accel_co2 - average_speed_co2:.2f} g",
+        "Note: average-speed is still using starter factors, so this gap is provisional.",
     ]
+
+
+def _intensity_g_per_km(co2_g: float, distance_m: float) -> float:
+    if distance_m <= 0:
+        return 0.0
+    return co2_g / (distance_m / 1000.0)
 
 
 if __name__ == "__main__":
