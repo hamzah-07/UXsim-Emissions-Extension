@@ -21,8 +21,8 @@ class MinimalModelComparisonDemoTestCase(unittest.TestCase):
         self.assertIn("Scenario: minimal-smoke", output)
         self.assertIn("Interval: timestep 5 at 5 s", output)
         self.assertIn("Average-speed CO2: 1.81 g", output)
-        self.assertIn("Speed-acceleration CO2: 0.02 g", output)
-        self.assertIn("Difference: -1.79 g", output)
+        self.assertIn("Speed-acceleration CO2: 0.30 g", output)
+        self.assertIn("Difference: -1.51 g", output)
 
 
 if __name__ == "__main__":

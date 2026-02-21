@@ -13,7 +13,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from experiments.minimal_uxsim_smoke import build_smoke_world
 from uxsim_emissions.factors import (
     load_average_speed_factor_table,
-    load_speed_acceleration_factor_table,
+    load_vt_micro_factor_table,
 )
 from uxsim_emissions.integration import UXsimAdapter
 from uxsim_emissions.models import AverageSpeedCO2Model, SpeedAccelerationCO2Model
@@ -30,11 +30,11 @@ def build_model_comparison_summary() -> list[str]:
         )
     )
     speed_accel_model = SpeedAccelerationCO2Model(
-        load_speed_acceleration_factor_table(
+        load_vt_micro_factor_table(
             PROJECT_ROOT
             / "data"
             / "emission_factors"
-            / "starter_speed_acceleration_co2_factors.csv"
+            / "vt_micro_co2_coefficients.csv"
         )
     )
 
