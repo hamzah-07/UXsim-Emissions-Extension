@@ -24,7 +24,7 @@ def build_baseline_experiment_summary(model_kind: str = "average_speed") -> list
     """Run the small synthetic baseline example and return summary lines."""
 
     model = _build_model(model_kind)
-    runner = ExperimentRunner(interval_steps=2, max_intervals=3)
+    runner = ExperimentRunner(interval_steps=2, max_intervals=None)
     scenario = build_baseline_scenario(_scenario_config())
     result = runner.run(baseline_scenario=scenario, model=model)
     return [f"Model: {model.name}", *build_experiment_summary_lines(result)]

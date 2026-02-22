@@ -63,6 +63,7 @@ class ExperimentRunner:
             scenario_name=baseline_scenario.config.name,
             runtime_seconds=perf_counter() - start_time,
             completed=not world.check_simulation_ongoing(),
+            average_delay_seconds=_average_delay_seconds(world),
             snapshots=snapshots,
             interval_results=interval_results,
             log_lines=log_lines,
@@ -103,3 +104,12 @@ def _run_snapshot_interval(
             distance_m=sum(sample.distance_m for sample in vehicle_samples.values()),
         ),
     )
+
+
+def _average_delay_seconds(world: object) -> float | None:
+    analyzer = getattr(world, "analyzer", None)
+    average_delay = getattr(analyzer, "average_delay", None)
+    if average_delay is None or average_delay == -1:
+        return None
+
+    return float(average_delay)

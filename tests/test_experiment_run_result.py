@@ -20,6 +20,7 @@ class ExperimentRunResultTestCase(unittest.TestCase):
         self.assertEqual(result.scenario_name, "baseline-check")
         self.assertEqual(result.runtime_seconds, 0.0)
         self.assertFalse(result.completed)
+        self.assertIsNone(result.average_delay_seconds)
         self.assertEqual(result.snapshots, [])
         self.assertEqual(result.interval_results, [])
         self.assertEqual(result.log_lines, [])

@@ -22,6 +22,8 @@ def build_experiment_summary_lines(result: ExperimentRunResult) -> list[str]:
         f"Total CO2: {total_co2_g:.2f} g over {total_distance_m:.1f} m",
         f"Emission intensity: {_intensity_g_per_km(total_co2_g, total_distance_m):.2f} g/km",
     ]
+    if result.average_delay_seconds is not None:
+        lines.append(f"Average delay: {result.average_delay_seconds:.2f} s")
 
     for index, interval_result in enumerate(result.interval_results, start=1):
         co2_g = interval_result.total_sample.pollutants_g.get("co2", 0.0)

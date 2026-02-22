@@ -13,6 +13,7 @@ class ExperimentRunResult:
     scenario_name: str
     runtime_seconds: float = 0.0
     completed: bool = False
+    average_delay_seconds: float | None = None
     snapshots: list[WorldObservationSnapshot] = field(default_factory=list)
     interval_results: list[SnapshotIntervalEmissionResult] = field(default_factory=list)
     log_lines: list[str] = field(default_factory=list)

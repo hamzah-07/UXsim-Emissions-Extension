@@ -65,6 +65,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertEqual(result.scenario_name, "runner-skeleton")
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertFalse(result.completed)
+        self.assertIsNone(result.average_delay_seconds)
         self.assertEqual(len(result.snapshots), 3)
         self.assertIsNone(result.snapshots[0].timestep)
         self.assertEqual(result.snapshots[1].timestep, 2)
@@ -95,6 +96,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
 
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertFalse(result.completed)
+        self.assertIsNone(result.average_delay_seconds)
         self.assertEqual(len(result.snapshots), 2)
         self.assertEqual(len(result.interval_results), 1)
         self.assertEqual(result.interval_results[0].timestep, 2)
@@ -113,6 +115,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
 
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertFalse(result.completed)
+        self.assertIsNone(result.average_delay_seconds)
         self.assertEqual(len(result.snapshots), 3)
         self.assertEqual(len(result.interval_results), 2)
         self.assertGreater(
@@ -136,6 +139,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         )
 
         self.assertTrue(result.completed)
+        self.assertIsNone(result.average_delay_seconds)
         self.assertEqual(len(result.interval_results), 2)
         self.assertEqual(result.interval_results[-1].timestep, 4)
 

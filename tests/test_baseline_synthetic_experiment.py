@@ -23,6 +23,7 @@ class BaselineSyntheticExperimentTestCase(unittest.TestCase):
         self.assertIn("Snapshots captured:", output)
         self.assertIn("Intervals computed:", output)
         self.assertIn("Total CO2:", output)
+        self.assertIn("Average delay: 0.50 s", output)
         self.assertIn("- Interval", output)
 
     def test_script_can_run_speed_acceleration_path(self) -> None:
