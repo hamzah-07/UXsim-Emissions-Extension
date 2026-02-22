@@ -64,6 +64,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertIsInstance(result, ExperimentRunResult)
         self.assertEqual(result.scenario_name, "runner-skeleton")
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
+        self.assertFalse(result.completed)
         self.assertEqual(len(result.snapshots), 3)
         self.assertIsNone(result.snapshots[0].timestep)
         self.assertEqual(result.snapshots[1].timestep, 2)
@@ -93,6 +94,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         )
 
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
+        self.assertFalse(result.completed)
         self.assertEqual(len(result.snapshots), 2)
         self.assertEqual(len(result.interval_results), 1)
         self.assertEqual(result.interval_results[0].timestep, 2)
@@ -110,6 +112,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         )
 
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
+        self.assertFalse(result.completed)
         self.assertEqual(len(result.snapshots), 3)
         self.assertEqual(len(result.interval_results), 2)
         self.assertGreater(
@@ -117,8 +120,36 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             0.0,
         )
 
+    def test_runner_can_continue_until_simulation_end_when_uncapped(self) -> None:
+        scenario_config = ScenarioConfig(
+            name="runner-complete",
+            nodes=SCENARIO_CONFIG.nodes,
+            links=SCENARIO_CONFIG.links,
+            demands=SCENARIO_CONFIG.demands,
+            tmax_s=4.0,
+        )
+        runner = ExperimentRunner(interval_steps=2, max_intervals=None)
+
+        result = runner.run(
+            baseline_scenario=build_baseline_scenario(scenario_config),
+            model=_build_model(),
+        )
+
+        self.assertTrue(result.completed)
+        self.assertEqual(len(result.interval_results), 2)
+        self.assertEqual(result.interval_results[-1].timestep, 4)
+
     def test_runner_rejects_non_positive_interval_steps(self) -> None:
         runner = ExperimentRunner(interval_steps=0)
+
+        with self.assertRaises(ValueError):
+            runner.run(
+                baseline_scenario=build_baseline_scenario(SCENARIO_CONFIG),
+                model=_build_model(),
+            )
+
+    def test_runner_rejects_negative_max_intervals(self) -> None:
+        runner = ExperimentRunner(interval_steps=1, max_intervals=-1)
 
         with self.assertRaises(ValueError):
             runner.run(

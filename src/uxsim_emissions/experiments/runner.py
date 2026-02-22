@@ -19,7 +19,7 @@ class ExperimentRunner:
     """Prepare the initial state for a baseline experiment run."""
 
     interval_steps: int = 1
-    max_intervals: int = 2
+    max_intervals: int | None = 2
 
     def run(
         self,
@@ -29,6 +29,8 @@ class ExperimentRunner:
     ) -> ExperimentRunResult:
         if self.interval_steps <= 0:
             raise ValueError("interval_steps must be positive")
+        if self.max_intervals is not None and self.max_intervals < 0:
+            raise ValueError("max_intervals must be non-negative when provided")
 
         start_time = perf_counter()
         world = baseline_scenario.world
@@ -36,9 +38,12 @@ class ExperimentRunner:
         snapshots = [baseline_scenario.initial_snapshot]
         interval_results = []
         log_lines = [f"Scenario: {baseline_scenario.config.name}"]
+        intervals_run = 0
 
-        for _ in range(self.max_intervals):
+        while True:
             if not world.check_simulation_ongoing():
+                break
+            if self.max_intervals is not None and intervals_run >= self.max_intervals:
                 break
 
             world.exec_simulation(duration_t2=self.interval_steps)
@@ -52,10 +57,12 @@ class ExperimentRunner:
                 )
             )
             log_lines.append(f"Advanced to timestep {current_snapshot.timestep}")
+            intervals_run += 1
 
         return ExperimentRunResult(
             scenario_name=baseline_scenario.config.name,
             runtime_seconds=perf_counter() - start_time,
+            completed=not world.check_simulation_ongoing(),
             snapshots=snapshots,
             interval_results=interval_results,
             log_lines=log_lines,
