@@ -18,7 +18,9 @@ def build_experiment_summary_lines(result: ExperimentRunResult) -> list[str]:
         f"Scenario: {result.scenario_name}",
         f"Snapshots captured: {len(result.snapshots)}",
         f"Intervals computed: {len(result.interval_results)}",
+        f"Runtime: {result.runtime_seconds:.3f} s",
         f"Total CO2: {total_co2_g:.2f} g over {total_distance_m:.1f} m",
+        f"Emission intensity: {_intensity_g_per_km(total_co2_g, total_distance_m):.2f} g/km",
     ]
 
     for index, interval_result in enumerate(result.interval_results, start=1):
@@ -29,3 +31,10 @@ def build_experiment_summary_lines(result: ExperimentRunResult) -> list[str]:
         )
 
     return lines
+
+
+def _intensity_g_per_km(total_co2_g: float, total_distance_m: float) -> float:
+    if total_distance_m <= 0:
+        return 0.0
+
+    return total_co2_g / (total_distance_m / 1000.0)

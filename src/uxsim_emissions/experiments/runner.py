@@ -1,6 +1,7 @@
 """Small orchestration helpers for repeatable baseline runs."""
 
 from dataclasses import dataclass
+from time import perf_counter
 
 from uxsim_emissions.aggregation import EmissionCollector, SnapshotIntervalEmissionResult
 from uxsim_emissions.integration import BaselineScenario, WorldObservationSnapshot
@@ -29,6 +30,7 @@ class ExperimentRunner:
         if self.interval_steps <= 0:
             raise ValueError("interval_steps must be positive")
 
+        start_time = perf_counter()
         world = baseline_scenario.world
         adapter = baseline_scenario.adapter
         snapshots = [baseline_scenario.initial_snapshot]
@@ -53,6 +55,7 @@ class ExperimentRunner:
 
         return ExperimentRunResult(
             scenario_name=baseline_scenario.config.name,
+            runtime_seconds=perf_counter() - start_time,
             snapshots=snapshots,
             interval_results=interval_results,
             log_lines=log_lines,

@@ -20,6 +20,7 @@ class ExperimentSummaryTestCase(unittest.TestCase):
     def test_summary_lines_cover_counts_and_interval_totals(self) -> None:
         result = ExperimentRunResult(
             scenario_name="baseline-summary",
+            runtime_seconds=1.25,
             snapshots=[
                 WorldObservationSnapshot(timestep=None, time_s=None, vehicle_observations=[], link_observations=[]),
                 WorldObservationSnapshot(timestep=2, time_s=2.0, vehicle_observations=[], link_observations=[]),
@@ -45,7 +46,9 @@ class ExperimentSummaryTestCase(unittest.TestCase):
         self.assertIn("Scenario: baseline-summary", output)
         self.assertIn("Snapshots captured: 3", output)
         self.assertIn("Intervals computed: 2", output)
+        self.assertIn("Runtime: 1.250 s", output)
         self.assertIn("Total CO2: 1.81 g over 10.0 m", output)
+        self.assertIn("Emission intensity: 181.00 g/km", output)
         self.assertIn("- Interval 2: timestep 4, 1.81 g CO2 over 10.0 m", output)
 
 

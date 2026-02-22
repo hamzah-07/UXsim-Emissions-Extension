@@ -63,6 +63,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
 
         self.assertIsInstance(result, ExperimentRunResult)
         self.assertEqual(result.scenario_name, "runner-skeleton")
+        self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertEqual(len(result.snapshots), 3)
         self.assertIsNone(result.snapshots[0].timestep)
         self.assertEqual(result.snapshots[1].timestep, 2)
@@ -91,6 +92,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             model=_build_model(),
         )
 
+        self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertEqual(len(result.snapshots), 2)
         self.assertEqual(len(result.interval_results), 1)
         self.assertEqual(result.interval_results[0].timestep, 2)
@@ -107,6 +109,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             model=_build_speed_accel_model(),
         )
 
+        self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertEqual(len(result.snapshots), 3)
         self.assertEqual(len(result.interval_results), 2)
         self.assertGreater(
