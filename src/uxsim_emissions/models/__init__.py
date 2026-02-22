@@ -2,6 +2,7 @@
 
 from .average_speed import AverageSpeedCO2Model
 from .base import EmissionModel, EmissionSample
+from .factory import build_emission_model
 from .speed_accel import SpeedAccelerationCO2Model
 from .vt_micro_units import (
     acceleration_mps2_to_kph_per_s,
@@ -14,6 +15,7 @@ __all__ = [
     "EmissionSample",
     "AverageSpeedCO2Model",
     "SpeedAccelerationCO2Model",
+    "build_emission_model",
     "speed_mps_to_kph",
     "acceleration_mps2_to_kph_per_s",
     "emission_rate_mg_per_s_to_g_per_s",

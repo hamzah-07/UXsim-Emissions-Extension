@@ -17,9 +17,12 @@ class EmissionModelConfig:
     """Select which emissions model family a run should use."""
 
     kind: EmissionModelKind | str = EmissionModelKind.AVERAGE_SPEED
+    factor_table_path: Path | str | None = None
 
     def __post_init__(self) -> None:
         self.kind = EmissionModelKind(self.kind)
+        if self.factor_table_path is not None:
+            self.factor_table_path = Path(self.factor_table_path)
 
 
 @dataclass(slots=True)
