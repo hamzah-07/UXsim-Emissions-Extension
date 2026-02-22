@@ -2,6 +2,8 @@
 
 from .config import (
     DemandConfig,
+    EmissionModelConfig,
+    EmissionModelKind,
     LinkConfig,
     LoggingConfig,
     NodeConfig,
@@ -11,6 +13,8 @@ from .config import (
 
 __all__ = [
     "DemandConfig",
+    "EmissionModelConfig",
+    "EmissionModelKind",
     "LinkConfig",
     "LoggingConfig",
     "NodeConfig",
@@ -18,4 +22,3 @@ __all__ = [
     "ScenarioConfig",
 ]
 __version__ = "0.1.0"
-

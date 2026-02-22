@@ -1,7 +1,25 @@
 """Shared configuration objects for experiments and logging."""
 
 from dataclasses import dataclass, field
+from enum import StrEnum
 from pathlib import Path
+
+
+class EmissionModelKind(StrEnum):
+    """Supported emissions model selections for configurable runs."""
+
+    AVERAGE_SPEED = "average_speed"
+    SPEED_ACCELERATION = "speed_acceleration"
+
+
+@dataclass(slots=True)
+class EmissionModelConfig:
+    """Select which emissions model family a run should use."""
+
+    kind: EmissionModelKind | str = EmissionModelKind.AVERAGE_SPEED
+
+    def __post_init__(self) -> None:
+        self.kind = EmissionModelKind(self.kind)
 
 
 @dataclass(slots=True)
@@ -73,4 +91,5 @@ class ProjectConfig:
 
     random_seed: int = 42
     timestep_seconds: float = 1.0
+    model: EmissionModelConfig = field(default_factory=EmissionModelConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
