@@ -77,8 +77,15 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             result.interval_results[1].total_sample.pollutants_g.get("co2", 0.0),
             0.0,
         )
+        self.assertEqual(list(result.interval_results[1].link_samples), ["orig_dest"])
+        self.assertGreater(
+            result.interval_results[1].link_samples["orig_dest"].pollutants_g.get("co2", 0.0),
+            0.0,
+        )
         self.assertGreater(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
         self.assertGreater(result.totals.total_sample.distance_m, 0.0)
+        self.assertEqual(list(result.totals.link_samples), ["orig_dest"])
+        self.assertGreater(result.totals.link_samples["orig_dest"].distance_m, 0.0)
         self.assertEqual(
             result.log_lines,
             [
@@ -102,8 +109,10 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertEqual(len(result.snapshots), 2)
         self.assertEqual(len(result.interval_results), 1)
         self.assertEqual(result.interval_results[0].timestep, 2)
+        self.assertEqual(result.interval_results[0].link_samples, {})
         self.assertEqual(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
         self.assertEqual(result.totals.total_sample.distance_m, 0.0)
+        self.assertEqual(result.totals.link_samples, {})
         self.assertEqual(
             result.log_lines,
             ["Scenario: runner-skeleton", "Advanced to timestep 2"],
@@ -126,8 +135,10 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             result.interval_results[1].total_sample.pollutants_g.get("co2", 0.0),
             0.0,
         )
+        self.assertEqual(list(result.interval_results[1].link_samples), ["orig_dest"])
         self.assertGreater(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
         self.assertGreater(result.totals.total_sample.distance_m, 0.0)
+        self.assertEqual(list(result.totals.link_samples), ["orig_dest"])
 
     def test_runner_can_continue_until_simulation_end_when_uncapped(self) -> None:
         scenario_config = ScenarioConfig(
@@ -150,6 +161,7 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertEqual(result.interval_results[-1].timestep, 4)
         self.assertGreater(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
         self.assertGreater(result.totals.total_sample.distance_m, 0.0)
+        self.assertEqual(list(result.totals.link_samples), ["orig_dest"])
 
     def test_runner_rejects_non_positive_interval_steps(self) -> None:
         runner = ExperimentRunner(interval_steps=0)

@@ -20,6 +20,7 @@ class SnapshotIntervalEmissionResultTestCase(unittest.TestCase):
         self.assertEqual(result.timestep, 5)
         self.assertEqual(result.time_s, 5.0)
         self.assertEqual(result.vehicle_samples, {})
+        self.assertEqual(result.link_samples, {})
         self.assertEqual(result.total_sample.pollutants_g, {})
         self.assertEqual(result.total_sample.distance_m, 0.0)
 

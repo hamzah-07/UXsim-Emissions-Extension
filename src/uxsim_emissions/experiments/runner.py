@@ -84,6 +84,7 @@ def _run_snapshot_interval(
         for observation in previous_snapshot.vehicle_observations
     }
     vehicle_samples: dict[str, EmissionSample] = {}
+    link_samples: dict[str, EmissionSample] = {}
     collector = EmissionCollector()
 
     for current_observation in current_snapshot.vehicle_observations:
@@ -97,11 +98,18 @@ def _run_snapshot_interval(
         )
         vehicle_samples[current_observation.vehicle_id] = sample
         collector.add(sample)
+        if current_observation.link_id is not None:
+            _add_sample_to_mapping(
+                samples_by_key=link_samples,
+                key=current_observation.link_id,
+                sample=sample,
+            )
 
     return SnapshotIntervalEmissionResult(
         timestep=current_snapshot.timestep,
         time_s=current_snapshot.time_s,
         vehicle_samples=vehicle_samples,
+        link_samples=link_samples,
         total_sample=EmissionSample(
             pollutants_g=dict(collector.total_pollutants_g),
             distance_m=sum(sample.distance_m for sample in vehicle_samples.values()),
@@ -125,14 +133,43 @@ def _build_run_totals(
 ) -> ExperimentRunTotals:
     collector = EmissionCollector()
     total_distance_m = 0.0
+    link_samples: dict[str, EmissionSample] = {}
 
     for interval_result in interval_results:
         collector.add(interval_result.total_sample)
         total_distance_m += interval_result.total_sample.distance_m
+        for link_id, sample in interval_result.link_samples.items():
+            _add_sample_to_mapping(
+                samples_by_key=link_samples,
+                key=link_id,
+                sample=sample,
+            )
 
     return ExperimentRunTotals(
         total_sample=EmissionSample(
             pollutants_g=dict(collector.total_pollutants_g),
             distance_m=total_distance_m,
-        )
+        ),
+        link_samples=link_samples,
     )
+
+
+def _add_sample_to_mapping(
+    *,
+    samples_by_key: dict[str, EmissionSample],
+    key: str,
+    sample: EmissionSample,
+) -> None:
+    existing = samples_by_key.get(key)
+    if existing is None:
+        samples_by_key[key] = EmissionSample(
+            pollutants_g=dict(sample.pollutants_g),
+            distance_m=sample.distance_m,
+            fuel_ml=sample.fuel_ml,
+        )
+        return
+
+    for pollutant, value in sample.pollutants_g.items():
+        existing.pollutants_g[pollutant] = existing.pollutants_g.get(pollutant, 0.0) + value
+    existing.distance_m += sample.distance_m
+    existing.fuel_ml += sample.fuel_ml

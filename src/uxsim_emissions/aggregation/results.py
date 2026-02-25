@@ -12,5 +12,5 @@ class SnapshotIntervalEmissionResult:
     timestep: int | None
     time_s: float | None
     vehicle_samples: dict[str, EmissionSample] = field(default_factory=dict)
+    link_samples: dict[str, EmissionSample] = field(default_factory=dict)
     total_sample: EmissionSample = field(default_factory=EmissionSample)
-

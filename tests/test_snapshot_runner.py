@@ -49,9 +49,14 @@ class SnapshotRunnerTestCase(unittest.TestCase):
         self.assertEqual(result.timestep, 5)
         self.assertEqual(result.time_s, 5)
         self.assertEqual(list(result.vehicle_samples), ["veh_0"])
+        self.assertEqual(list(result.link_samples), ["orig_dest"])
         self.assertAlmostEqual(
             result.vehicle_samples["veh_0"].pollutants_g["co2"], 1.81, places=6
         )
+        self.assertAlmostEqual(
+            result.link_samples["orig_dest"].pollutants_g["co2"], 1.81, places=6
+        )
+        self.assertEqual(result.link_samples["orig_dest"].distance_m, 10.0)
         self.assertAlmostEqual(result.total_sample.pollutants_g["co2"], 1.81, places=6)
         self.assertEqual(result.total_sample.distance_m, 10.0)
 
@@ -70,6 +75,7 @@ class SnapshotRunnerTestCase(unittest.TestCase):
         )
 
         self.assertEqual(result.vehicle_samples, {})
+        self.assertEqual(result.link_samples, {})
         self.assertEqual(result.total_sample.pollutants_g, {})
         self.assertEqual(result.total_sample.distance_m, 0)
 
@@ -94,6 +100,8 @@ class SnapshotRunnerTestCase(unittest.TestCase):
         self.assertEqual([result.timestep for result in results], [5, 6])
         self.assertAlmostEqual(results[0].total_sample.pollutants_g["co2"], 1.81, places=6)
         self.assertAlmostEqual(results[1].total_sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertAlmostEqual(results[0].link_samples["orig_dest"].pollutants_g["co2"], 1.81, places=6)
+        self.assertAlmostEqual(results[1].link_samples["orig_dest"].pollutants_g["co2"], 1.81, places=6)
         self.assertEqual(results[0].total_sample.distance_m, 10.0)
         self.assertEqual(results[1].total_sample.distance_m, 10.0)
 

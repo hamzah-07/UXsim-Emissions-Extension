@@ -12,6 +12,7 @@ class ExperimentRunTotals:
     """Structured headline totals for one experiment run."""
 
     total_sample: EmissionSample = field(default_factory=EmissionSample)
+    link_samples: dict[str, EmissionSample] = field(default_factory=dict)
 
 
 @dataclass(slots=True)

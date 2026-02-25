@@ -23,6 +23,7 @@ class ExperimentRunResultTestCase(unittest.TestCase):
         self.assertIsNone(result.average_delay_seconds)
         self.assertEqual(result.totals.total_sample.pollutants_g, {})
         self.assertEqual(result.totals.total_sample.distance_m, 0.0)
+        self.assertEqual(result.totals.link_samples, {})
         self.assertEqual(result.snapshots, [])
         self.assertEqual(result.interval_results, [])
         self.assertEqual(result.log_lines, [])

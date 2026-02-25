@@ -61,6 +61,7 @@ def _run_snapshot_interval(
         for observation in previous_snapshot.vehicle_observations
     }
     vehicle_samples: dict[str, EmissionSample] = {}
+    link_samples: dict[str, EmissionSample] = {}
     collector = EmissionCollector()
 
     for current_observation in current_snapshot.vehicle_observations:
@@ -77,11 +78,18 @@ def _run_snapshot_interval(
         )
         vehicle_samples[current_observation.vehicle_id] = sample
         collector.add(sample)
+        if current_observation.link_id is not None:
+            _add_sample_to_mapping(
+                samples_by_key=link_samples,
+                key=current_observation.link_id,
+                sample=sample,
+            )
 
     return SnapshotIntervalEmissionResult(
         timestep=current_snapshot.timestep,
         time_s=current_snapshot.time_s,
         vehicle_samples=vehicle_samples,
+        link_samples=link_samples,
         total_sample=_build_total_sample(
             collector=collector,
             vehicle_samples=vehicle_samples,
@@ -100,3 +108,24 @@ def _build_total_sample(
         pollutants_g=dict(collector.total_pollutants_g),
         distance_m=sum(sample.distance_m for sample in vehicle_samples.values()),
     )
+
+
+def _add_sample_to_mapping(
+    *,
+    samples_by_key: dict[str, EmissionSample],
+    key: str,
+    sample: EmissionSample,
+) -> None:
+    existing = samples_by_key.get(key)
+    if existing is None:
+        samples_by_key[key] = EmissionSample(
+            pollutants_g=dict(sample.pollutants_g),
+            distance_m=sample.distance_m,
+            fuel_ml=sample.fuel_ml,
+        )
+        return
+
+    for pollutant, value in sample.pollutants_g.items():
+        existing.pollutants_g[pollutant] = existing.pollutants_g.get(pollutant, 0.0) + value
+    existing.distance_m += sample.distance_m
+    existing.fuel_ml += sample.fuel_ml
