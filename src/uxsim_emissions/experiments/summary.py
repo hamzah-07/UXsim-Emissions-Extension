@@ -6,14 +6,8 @@ from .results import ExperimentRunResult
 def build_experiment_summary_lines(result: ExperimentRunResult) -> list[str]:
     """Summarise a run result into readable text lines."""
 
-    total_co2_g = sum(
-        interval_result.total_sample.pollutants_g.get("co2", 0.0)
-        for interval_result in result.interval_results
-    )
-    total_distance_m = sum(
-        interval_result.total_sample.distance_m
-        for interval_result in result.interval_results
-    )
+    total_co2_g = result.totals.total_sample.pollutants_g.get("co2", 0.0)
+    total_distance_m = result.totals.total_sample.distance_m
     lines = [
         f"Scenario: {result.scenario_name}",
         f"Snapshots captured: {len(result.snapshots)}",

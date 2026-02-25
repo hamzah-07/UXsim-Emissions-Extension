@@ -4,6 +4,14 @@ from dataclasses import dataclass, field
 
 from uxsim_emissions.aggregation import SnapshotIntervalEmissionResult
 from uxsim_emissions.integration import WorldObservationSnapshot
+from uxsim_emissions.models import EmissionSample
+
+
+@dataclass(slots=True)
+class ExperimentRunTotals:
+    """Structured headline totals for one experiment run."""
+
+    total_sample: EmissionSample = field(default_factory=EmissionSample)
 
 
 @dataclass(slots=True)
@@ -14,6 +22,7 @@ class ExperimentRunResult:
     runtime_seconds: float = 0.0
     completed: bool = False
     average_delay_seconds: float | None = None
+    totals: ExperimentRunTotals = field(default_factory=ExperimentRunTotals)
     snapshots: list[WorldObservationSnapshot] = field(default_factory=list)
     interval_results: list[SnapshotIntervalEmissionResult] = field(default_factory=list)
     log_lines: list[str] = field(default_factory=list)

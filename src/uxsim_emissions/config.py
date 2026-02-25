@@ -20,6 +20,8 @@ class EmissionModelConfig:
     factor_table_path: Path | str | None = None
 
     def __post_init__(self) -> None:
+        # Coerce loose config-file or script inputs into the stricter runtime
+        # types the rest of the package expects.
         self.kind = EmissionModelKind(self.kind)
         if self.factor_table_path is not None:
             self.factor_table_path = Path(self.factor_table_path)

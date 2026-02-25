@@ -29,6 +29,9 @@ def build_baseline_experiment_summary(
     """Run the small synthetic baseline example and return summary lines."""
 
     model = build_emission_model(EmissionModelConfig(kind=model_kind))
+    # The baseline summary is now meant to reflect dissertation-style headline
+    # metrics, so let the run finish rather than truncating after a few early
+    # intervals.
     runner = ExperimentRunner(interval_steps=2, max_intervals=None)
     scenario = build_baseline_scenario(_scenario_config())
     result = runner.run(baseline_scenario=scenario, model=model)

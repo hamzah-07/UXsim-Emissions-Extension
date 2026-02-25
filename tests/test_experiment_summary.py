@@ -11,7 +11,11 @@ if str(SRC_PATH) not in sys.path:
     sys.path.insert(0, str(SRC_PATH))
 
 from uxsim_emissions.aggregation import SnapshotIntervalEmissionResult
-from uxsim_emissions.experiments import ExperimentRunResult, build_experiment_summary_lines
+from uxsim_emissions.experiments import (
+    ExperimentRunResult,
+    ExperimentRunTotals,
+    build_experiment_summary_lines,
+)
 from uxsim_emissions.integration import WorldObservationSnapshot
 from uxsim_emissions.models import EmissionSample
 
@@ -22,6 +26,12 @@ class ExperimentSummaryTestCase(unittest.TestCase):
             scenario_name="baseline-summary",
             runtime_seconds=1.25,
             average_delay_seconds=0.5,
+            totals=ExperimentRunTotals(
+                total_sample=EmissionSample(
+                    pollutants_g={"co2": 1.81},
+                    distance_m=10.0,
+                )
+            ),
             snapshots=[
                 WorldObservationSnapshot(timestep=None, time_s=None, vehicle_observations=[], link_observations=[]),
                 WorldObservationSnapshot(timestep=2, time_s=2.0, vehicle_observations=[], link_observations=[]),

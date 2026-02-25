@@ -15,6 +15,9 @@ from .base import EmissionModel
 from .speed_accel import SpeedAccelerationCO2Model
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
+# These defaults intentionally point at the tracked datasets already used by
+# the repo so config-driven runs keep the same baseline behaviour as the
+# existing scripts unless a caller opts into a different table explicitly.
 DEFAULT_AVERAGE_SPEED_FACTOR_TABLE_PATH = (
     PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
 )
@@ -31,6 +34,8 @@ def build_emission_model(config: EmissionModelConfig) -> EmissionModel:
         if config.factor_table_path is not None
         else _default_factor_table_path(config.kind)
     )
+    # Keep the first config-driven factory deliberately small: choose the model
+    # family, then hand off to the existing loader and model classes unchanged.
     if config.kind == EmissionModelKind.AVERAGE_SPEED:
         return AverageSpeedCO2Model(
             factor_table=load_average_speed_factor_table(factor_table_path)

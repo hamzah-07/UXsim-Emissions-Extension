@@ -11,7 +11,7 @@ from uxsim_emissions.models import (
     SpeedAccelerationCO2Model,
 )
 
-from .results import ExperimentRunResult
+from .results import ExperimentRunResult, ExperimentRunTotals
 
 
 @dataclass(slots=True)
@@ -43,6 +43,8 @@ class ExperimentRunner:
         while True:
             if not world.check_simulation_ongoing():
                 break
+            # `None` means "keep going until UXsim says the run is finished",
+            # which we now need for full-run metrics such as average delay.
             if self.max_intervals is not None and intervals_run >= self.max_intervals:
                 break
 
@@ -64,6 +66,7 @@ class ExperimentRunner:
             runtime_seconds=perf_counter() - start_time,
             completed=not world.check_simulation_ongoing(),
             average_delay_seconds=_average_delay_seconds(world),
+            totals=_build_run_totals(interval_results),
             snapshots=snapshots,
             interval_results=interval_results,
             log_lines=log_lines,
@@ -109,7 +112,27 @@ def _run_snapshot_interval(
 def _average_delay_seconds(world: object) -> float | None:
     analyzer = getattr(world, "analyzer", None)
     average_delay = getattr(analyzer, "average_delay", None)
+    # UXsim uses `-1` when no completed trips exist yet, so treat that as
+    # unavailable rather than quietly pretending the delay was zero.
     if average_delay is None or average_delay == -1:
         return None
 
     return float(average_delay)
+
+
+def _build_run_totals(
+    interval_results: list[SnapshotIntervalEmissionResult],
+) -> ExperimentRunTotals:
+    collector = EmissionCollector()
+    total_distance_m = 0.0
+
+    for interval_result in interval_results:
+        collector.add(interval_result.total_sample)
+        total_distance_m += interval_result.total_sample.distance_m
+
+    return ExperimentRunTotals(
+        total_sample=EmissionSample(
+            pollutants_g=dict(collector.total_pollutants_g),
+            distance_m=total_distance_m,
+        )
+    )
