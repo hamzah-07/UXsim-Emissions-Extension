@@ -11,6 +11,7 @@ if str(SRC_PATH) not in sys.path:
     sys.path.insert(0, str(SRC_PATH))
 
 from uxsim_emissions import DemandConfig, LinkConfig, NodeConfig, ScenarioConfig
+from uxsim_emissions.config import LoggingConfig
 from uxsim_emissions.experiments import ExperimentRunResult, ExperimentRunner
 from uxsim_emissions.factors import (
     load_average_speed_factor_table,
@@ -180,6 +181,40 @@ class ExperimentRunnerTestCase(unittest.TestCase):
                 baseline_scenario=build_baseline_scenario(SCENARIO_CONFIG),
                 model=_build_model(),
             )
+
+    def test_runner_can_suppress_vehicle_and_link_details(self) -> None:
+        runner = ExperimentRunner(
+            interval_steps=2,
+            logging_config=LoggingConfig(per_vehicle=False, per_link=False),
+        )
+
+        result = runner.run(
+            baseline_scenario=build_baseline_scenario(SCENARIO_CONFIG),
+            model=_build_model(),
+        )
+
+        self.assertEqual(len(result.interval_results), 2)
+        self.assertEqual(result.interval_results[1].vehicle_samples, {})
+        self.assertEqual(result.interval_results[1].link_samples, {})
+        self.assertGreater(result.interval_results[1].total_sample.pollutants_g["co2"], 0.0)
+        self.assertEqual(result.totals.link_samples, {})
+        self.assertGreater(result.totals.total_sample.distance_m, 0.0)
+
+    def test_runner_can_disable_per_timestep_outputs_but_keep_totals(self) -> None:
+        runner = ExperimentRunner(
+            interval_steps=2,
+            logging_config=LoggingConfig(per_timestep=False),
+        )
+
+        result = runner.run(
+            baseline_scenario=build_baseline_scenario(SCENARIO_CONFIG),
+            model=_build_model(),
+        )
+
+        self.assertEqual(result.snapshots, [])
+        self.assertEqual(result.interval_results, [])
+        self.assertGreater(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
+        self.assertEqual(list(result.totals.link_samples), ["orig_dest"])
 
 
 def _build_model() -> AverageSpeedCO2Model:

@@ -1,9 +1,10 @@
 """Small orchestration helpers for repeatable baseline runs."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from time import perf_counter
 
 from uxsim_emissions.aggregation import EmissionCollector, SnapshotIntervalEmissionResult
+from uxsim_emissions.config import LoggingConfig
 from uxsim_emissions.integration import BaselineScenario, WorldObservationSnapshot
 from uxsim_emissions.models import (
     AverageSpeedCO2Model,
@@ -20,6 +21,7 @@ class ExperimentRunner:
 
     interval_steps: int = 1
     max_intervals: int | None = 2
+    logging_config: LoggingConfig = field(default_factory=LoggingConfig)
 
     def run(
         self,
@@ -35,8 +37,10 @@ class ExperimentRunner:
         start_time = perf_counter()
         world = baseline_scenario.world
         adapter = baseline_scenario.adapter
-        snapshots = [baseline_scenario.initial_snapshot]
+        previous_snapshot = baseline_scenario.initial_snapshot
+        snapshots = [previous_snapshot] if self.logging_config.per_timestep else []
         interval_results = []
+        raw_interval_results = []
         log_lines = [f"Scenario: {baseline_scenario.config.name}"]
         intervals_run = 0
 
@@ -50,23 +54,33 @@ class ExperimentRunner:
 
             world.exec_simulation(duration_t2=self.interval_steps)
             current_snapshot = adapter.capture_snapshot(world)
-            snapshots.append(current_snapshot)
-            interval_results.append(
-                _run_snapshot_interval(
-                    model=model,
-                    previous_snapshot=snapshots[-2],
-                    current_snapshot=snapshots[-1],
-                )
+            raw_interval_result = _run_snapshot_interval(
+                model=model,
+                previous_snapshot=previous_snapshot,
+                current_snapshot=current_snapshot,
             )
+            raw_interval_results.append(raw_interval_result)
+            if self.logging_config.per_timestep:
+                snapshots.append(current_snapshot)
+                interval_results.append(
+                    _filter_interval_result(
+                        raw_interval_result=raw_interval_result,
+                        logging_config=self.logging_config,
+                    )
+                )
             log_lines.append(f"Advanced to timestep {current_snapshot.timestep}")
             intervals_run += 1
+            previous_snapshot = current_snapshot
 
         return ExperimentRunResult(
             scenario_name=baseline_scenario.config.name,
             runtime_seconds=perf_counter() - start_time,
             completed=not world.check_simulation_ongoing(),
             average_delay_seconds=_average_delay_seconds(world),
-            totals=_build_run_totals(interval_results),
+            totals=_build_run_totals(
+                raw_interval_results,
+                include_link_samples=self.logging_config.per_link,
+            ),
             snapshots=snapshots,
             interval_results=interval_results,
             log_lines=log_lines,
@@ -130,6 +144,8 @@ def _average_delay_seconds(world: object) -> float | None:
 
 def _build_run_totals(
     interval_results: list[SnapshotIntervalEmissionResult],
+    *,
+    include_link_samples: bool,
 ) -> ExperimentRunTotals:
     collector = EmissionCollector()
     total_distance_m = 0.0
@@ -138,12 +154,13 @@ def _build_run_totals(
     for interval_result in interval_results:
         collector.add(interval_result.total_sample)
         total_distance_m += interval_result.total_sample.distance_m
-        for link_id, sample in interval_result.link_samples.items():
-            _add_sample_to_mapping(
-                samples_by_key=link_samples,
-                key=link_id,
-                sample=sample,
-            )
+        if include_link_samples:
+            for link_id, sample in interval_result.link_samples.items():
+                _add_sample_to_mapping(
+                    samples_by_key=link_samples,
+                    key=link_id,
+                    sample=sample,
+                )
 
     return ExperimentRunTotals(
         total_sample=EmissionSample(
@@ -151,6 +168,22 @@ def _build_run_totals(
             distance_m=total_distance_m,
         ),
         link_samples=link_samples,
+    )
+
+
+def _filter_interval_result(
+    *,
+    raw_interval_result: SnapshotIntervalEmissionResult,
+    logging_config: LoggingConfig,
+) -> SnapshotIntervalEmissionResult:
+    return SnapshotIntervalEmissionResult(
+        timestep=raw_interval_result.timestep,
+        time_s=raw_interval_result.time_s,
+        vehicle_samples=(
+            raw_interval_result.vehicle_samples if logging_config.per_vehicle else {}
+        ),
+        link_samples=raw_interval_result.link_samples if logging_config.per_link else {},
+        total_sample=raw_interval_result.total_sample,
     )
 
 
