@@ -11,6 +11,7 @@ if str(SRC_PATH) not in sys.path:
     sys.path.insert(0, str(SRC_PATH))
 
 from experiments.baseline_synthetic_experiment import build_baseline_experiment_summary
+from uxsim_emissions import EmissionModelKind
 
 
 class BaselineSyntheticExperimentTestCase(unittest.TestCase):
@@ -27,7 +28,9 @@ class BaselineSyntheticExperimentTestCase(unittest.TestCase):
         self.assertIn("- Interval", output)
 
     def test_script_can_run_speed_acceleration_path(self) -> None:
-        lines = build_baseline_experiment_summary(model_kind="speed_acceleration")
+        lines = build_baseline_experiment_summary(
+            model_kind=EmissionModelKind.SPEED_ACCELERATION
+        )
         output = "\n".join(lines)
 
         self.assertIn("Model: speed_acceleration_co2", output)

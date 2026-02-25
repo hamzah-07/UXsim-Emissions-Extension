@@ -12,14 +12,17 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from experiments.baseline_synthetic_experiment import build_baseline_experiment_summary
+from uxsim_emissions import EmissionModelKind
 
 TOTAL_CO2_PATTERN = re.compile(r"^Total CO2: ([0-9.]+) g over ([0-9.]+) m$")
 
 
 def build_baseline_model_comparison_summary() -> list[str]:
-    average_speed_lines = build_baseline_experiment_summary(model_kind="average_speed")
+    average_speed_lines = build_baseline_experiment_summary(
+        model_kind=EmissionModelKind.AVERAGE_SPEED
+    )
     speed_acceleration_lines = build_baseline_experiment_summary(
-        model_kind="speed_acceleration"
+        model_kind=EmissionModelKind.SPEED_ACCELERATION
     )
 
     average_speed_total, average_speed_distance_m = _extract_total_summary(
