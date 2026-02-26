@@ -12,6 +12,7 @@ if str(SRC_PATH) not in sys.path:
 
 from experiments.baseline_synthetic_experiment import build_baseline_experiment_summary
 from uxsim_emissions import EmissionModelKind
+from uxsim_emissions.scenarios import ScenarioKind
 
 
 class BaselineSyntheticExperimentTestCase(unittest.TestCase):
@@ -35,6 +36,16 @@ class BaselineSyntheticExperimentTestCase(unittest.TestCase):
 
         self.assertIn("Model: speed_acceleration_co2", output)
         self.assertIn("Scenario: baseline-two-link", output)
+        self.assertIn("Total CO2:", output)
+
+    def test_script_can_run_small_validation_scenario(self) -> None:
+        lines = build_baseline_experiment_summary(
+            scenario_kind=ScenarioKind.SMALL_VALIDATION
+        )
+        output = "\n".join(lines)
+
+        self.assertIn("Model: average_speed_co2", output)
+        self.assertIn("Scenario: merge-validation-network", output)
         self.assertIn("Total CO2:", output)
 
 
