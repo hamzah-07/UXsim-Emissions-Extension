@@ -45,6 +45,8 @@ def load_town_centre_import_config(
     with path.open("r", encoding="utf-8") as handle:
         metadata = json.load(handle)
 
+    # Keep the external JSON shape simple so the chosen case-study area and
+    # planned artefact names remain editable without changing Python code.
     source = metadata["source"]
     planned_inputs = metadata["planned_inputs"]
     planned_outputs = metadata["planned_outputs"]

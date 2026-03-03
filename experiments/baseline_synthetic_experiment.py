@@ -28,6 +28,8 @@ def build_baseline_experiment_summary(
     # metrics, so let the run finish rather than truncating after a few early
     # intervals.
     runner = ExperimentRunner(interval_steps=2, max_intervals=None)
+    # Reuse the same harness across the tiny and small validation scenarios
+    # while the town-centre OSM path is still being built out.
     scenario = build_baseline_scenario(build_scenario_config(scenario_kind))
     result = runner.run(baseline_scenario=scenario, model=model)
     return [f"Model: {model.name}", *build_experiment_summary_lines(result)]

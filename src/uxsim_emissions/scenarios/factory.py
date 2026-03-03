@@ -19,6 +19,8 @@ class ScenarioKind(StrEnum):
 def build_scenario_config(kind: ScenarioKind | str) -> ScenarioConfig:
     """Return a reusable scenario configuration for the requested stage."""
 
+    # Centralise the early staged scenarios here so experiment scripts can
+    # switch between them without each growing local branching logic.
     scenario_kind = ScenarioKind(kind)
     if scenario_kind is ScenarioKind.SYNTHETIC_BASELINE:
         return baseline_two_link_scenario_config()
