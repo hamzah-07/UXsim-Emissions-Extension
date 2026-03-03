@@ -7,6 +7,7 @@ OSM-backed case study.
 
 - Study area: `Linlithgow, Scotland`
 - Bounding box: `-3.630,55.965,-3.580,55.985`
+- Metadata file: `linlithgow_metadata.json`
 
 ## Planned Contents
 

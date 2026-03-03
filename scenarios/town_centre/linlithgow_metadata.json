@@ -1,0 +1,24 @@
+{
+  "study_area": "Linlithgow town centre",
+  "country": "Scotland",
+  "source": {
+    "provider": "OpenStreetMap",
+    "coordinate_system": "WGS84",
+    "bbox_order": "left,bottom,right,top",
+    "bbox": {
+      "min_lon": -3.630,
+      "min_lat": 55.965,
+      "max_lon": -3.580,
+      "max_lat": 55.985
+    },
+    "bbox_string": "-3.630,55.965,-3.580,55.985"
+  },
+  "planned_inputs": {
+    "raw_osm_basename": "linlithgow_bbox"
+  },
+  "planned_outputs": {
+    "processed_nodes_csv": "linlithgow_nodes.csv",
+    "processed_links_csv": "linlithgow_links.csv",
+    "baseline_demand_notes": "baseline_demand_assumptions.md"
+  }
+}
