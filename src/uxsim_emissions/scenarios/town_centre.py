@@ -34,6 +34,20 @@ class TownCentreImportConfig:
     processed_nodes_csv: str
     processed_links_csv: str
     baseline_demand_notes: str
+    baseline_demand_profile_json: str
+    intervention_demand_profile_json: str
+
+
+@dataclass(slots=True)
+class OSMPreprocessingRules:
+    """Initial OSM filtering and default assumptions for UXsim conversion."""
+
+    kept_highway_types: tuple[str, ...]
+    default_speed_kph_by_highway: dict[str, float]
+    default_lanes_by_highway: dict[str, int]
+    minimum_link_length_m: float = 5.0
+    use_oneway_tags: bool = True
+    simplify_junctions: bool = True
 
 
 def load_town_centre_import_config(
@@ -66,4 +80,46 @@ def load_town_centre_import_config(
         processed_nodes_csv=str(planned_outputs["processed_nodes_csv"]),
         processed_links_csv=str(planned_outputs["processed_links_csv"]),
         baseline_demand_notes=str(planned_outputs["baseline_demand_notes"]),
+        baseline_demand_profile_json=str(planned_outputs["baseline_demand_profile_json"]),
+        intervention_demand_profile_json=str(
+            planned_outputs["intervention_demand_profile_json"]
+        ),
+    )
+
+
+def linlithgow_preprocessing_rules() -> OSMPreprocessingRules:
+    """Return the first-pass OSM preprocessing rules for Linlithgow."""
+
+    # Start with a conservative urban road set so the first town-centre network
+    # is manageable to validate before adding lower-priority edges.
+    return OSMPreprocessingRules(
+        kept_highway_types=(
+            "motorway",
+            "trunk",
+            "primary",
+            "secondary",
+            "tertiary",
+            "unclassified",
+            "residential",
+            "living_street",
+            "service",
+        ),
+        default_speed_kph_by_highway={
+            "primary": 48.0,
+            "secondary": 48.0,
+            "tertiary": 40.0,
+            "unclassified": 32.0,
+            "residential": 32.0,
+            "living_street": 16.0,
+            "service": 16.0,
+        },
+        default_lanes_by_highway={
+            "primary": 2,
+            "secondary": 2,
+            "tertiary": 2,
+            "unclassified": 1,
+            "residential": 1,
+            "living_street": 1,
+            "service": 1,
+        },
     )

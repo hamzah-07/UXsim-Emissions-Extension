@@ -25,6 +25,10 @@ class TownCentreImportConfigTestCase(unittest.TestCase):
         self.assertEqual(config.raw_osm_basename, "linlithgow_bbox")
         self.assertEqual(config.processed_nodes_csv, "linlithgow_nodes.csv")
         self.assertEqual(config.processed_links_csv, "linlithgow_links.csv")
+        self.assertEqual(
+            config.baseline_demand_profile_json,
+            "linlithgow_baseline_demands.json",
+        )
 
 
 if __name__ == "__main__":
