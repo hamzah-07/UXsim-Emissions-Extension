@@ -1,0 +1,26 @@
+{
+  "name": "baseline",
+  "tmax_s": 360.0,
+  "demands": [
+    {
+      "origin": "863395379",
+      "destination": "1598385340",
+      "departure_times_s": [0.0, 30.0, 60.0, 90.0, 120.0]
+    },
+    {
+      "origin": "1598385340",
+      "destination": "863395379",
+      "departure_times_s": [15.0, 45.0, 75.0, 105.0, 135.0]
+    },
+    {
+      "origin": "343450940",
+      "destination": "75632172",
+      "departure_times_s": [20.0, 50.0, 80.0, 110.0, 140.0]
+    },
+    {
+      "origin": "75632172",
+      "destination": "343450940",
+      "departure_times_s": [35.0, 65.0, 95.0, 125.0, 155.0]
+    }
+  ]
+}
