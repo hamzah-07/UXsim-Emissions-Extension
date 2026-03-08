@@ -18,6 +18,10 @@ class TownCentreMetadataTestCase(unittest.TestCase):
         self.assertEqual(metadata["source"]["bbox_string"], "-3.630,55.965,-3.580,55.985")
         self.assertEqual(metadata["planned_outputs"]["processed_nodes_csv"], "linlithgow_nodes.csv")
         self.assertEqual(metadata["planned_outputs"]["processed_links_csv"], "linlithgow_links.csv")
+        self.assertEqual(
+            metadata["planned_outputs"]["baseline_demand_profile_json"],
+            "linlithgow_baseline_demands.json",
+        )
 
 
 if __name__ == "__main__":
