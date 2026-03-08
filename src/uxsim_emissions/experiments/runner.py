@@ -42,6 +42,7 @@ class ExperimentRunner:
         interval_results = []
         raw_interval_results = []
         log_lines = [f"Scenario: {baseline_scenario.config.name}"]
+        snapshots_captured_count = 1
         intervals_run = 0
 
         while True:
@@ -54,6 +55,7 @@ class ExperimentRunner:
 
             world.exec_simulation(duration_t2=self.interval_steps)
             current_snapshot = adapter.capture_snapshot(world)
+            snapshots_captured_count += 1
             raw_interval_result = _run_snapshot_interval(
                 model=model,
                 previous_snapshot=previous_snapshot,
@@ -74,6 +76,8 @@ class ExperimentRunner:
 
         return ExperimentRunResult(
             scenario_name=baseline_scenario.config.name,
+            snapshots_captured_count=snapshots_captured_count,
+            intervals_computed_count=len(raw_interval_results),
             runtime_seconds=perf_counter() - start_time,
             completed=not world.check_simulation_ongoing(),
             average_delay_seconds=_average_delay_seconds(world),

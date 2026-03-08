@@ -20,6 +20,8 @@ class ExperimentRunResult:
     """Captured outputs from one baseline experiment run."""
 
     scenario_name: str
+    snapshots_captured_count: int = 0
+    intervals_computed_count: int = 0
     runtime_seconds: float = 0.0
     completed: bool = False
     average_delay_seconds: float | None = None

@@ -8,10 +8,14 @@ def build_experiment_summary_lines(result: ExperimentRunResult) -> list[str]:
 
     total_co2_g = result.totals.total_sample.pollutants_g.get("co2", 0.0)
     total_distance_m = result.totals.total_sample.distance_m
+    snapshots_captured_count = result.snapshots_captured_count or len(result.snapshots)
+    intervals_computed_count = (
+        result.intervals_computed_count or len(result.interval_results)
+    )
     lines = [
         f"Scenario: {result.scenario_name}",
-        f"Snapshots captured: {len(result.snapshots)}",
-        f"Intervals computed: {len(result.interval_results)}",
+        f"Snapshots captured: {snapshots_captured_count}",
+        f"Intervals computed: {intervals_computed_count}",
         f"Runtime: {result.runtime_seconds:.3f} s",
         f"Total CO2: {total_co2_g:.2f} g over {total_distance_m:.1f} m",
         f"Emission intensity: {_intensity_g_per_km(total_co2_g, total_distance_m):.2f} g/km",

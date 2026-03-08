@@ -24,6 +24,8 @@ class ExperimentSummaryTestCase(unittest.TestCase):
     def test_summary_lines_cover_counts_and_interval_totals(self) -> None:
         result = ExperimentRunResult(
             scenario_name="baseline-summary",
+            snapshots_captured_count=3,
+            intervals_computed_count=2,
             runtime_seconds=1.25,
             average_delay_seconds=0.5,
             totals=ExperimentRunTotals(
@@ -62,6 +64,28 @@ class ExperimentSummaryTestCase(unittest.TestCase):
         self.assertIn("Emission intensity: 181.00 g/km", output)
         self.assertIn("Average delay: 0.50 s", output)
         self.assertIn("- Interval 2: timestep 4, 1.81 g CO2 over 10.0 m", output)
+
+    def test_summary_uses_raw_counts_when_per_timestep_outputs_are_not_retained(self) -> None:
+        result = ExperimentRunResult(
+            scenario_name="retained-light",
+            snapshots_captured_count=3,
+            intervals_computed_count=2,
+            runtime_seconds=1.25,
+            totals=ExperimentRunTotals(
+                total_sample=EmissionSample(
+                    pollutants_g={"co2": 1.81},
+                    distance_m=10.0,
+                )
+            ),
+            snapshots=[],
+            interval_results=[],
+        )
+
+        lines = build_experiment_summary_lines(result)
+        output = "\n".join(lines)
+
+        self.assertIn("Snapshots captured: 3", output)
+        self.assertIn("Intervals computed: 2", output)
 
 
 if __name__ == "__main__":

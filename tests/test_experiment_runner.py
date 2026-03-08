@@ -67,6 +67,8 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertFalse(result.completed)
         self.assertIsNone(result.average_delay_seconds)
+        self.assertEqual(result.snapshots_captured_count, 3)
+        self.assertEqual(result.intervals_computed_count, 2)
         self.assertEqual(len(result.snapshots), 3)
         self.assertIsNone(result.snapshots[0].timestep)
         self.assertEqual(result.snapshots[1].timestep, 2)
@@ -107,6 +109,8 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertFalse(result.completed)
         self.assertIsNone(result.average_delay_seconds)
+        self.assertEqual(result.snapshots_captured_count, 2)
+        self.assertEqual(result.intervals_computed_count, 1)
         self.assertEqual(len(result.snapshots), 2)
         self.assertEqual(len(result.interval_results), 1)
         self.assertEqual(result.interval_results[0].timestep, 2)
@@ -130,6 +134,8 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertGreaterEqual(result.runtime_seconds, 0.0)
         self.assertFalse(result.completed)
         self.assertIsNone(result.average_delay_seconds)
+        self.assertEqual(result.snapshots_captured_count, 3)
+        self.assertEqual(result.intervals_computed_count, 2)
         self.assertEqual(len(result.snapshots), 3)
         self.assertEqual(len(result.interval_results), 2)
         self.assertGreater(
@@ -158,6 +164,8 @@ class ExperimentRunnerTestCase(unittest.TestCase):
 
         self.assertTrue(result.completed)
         self.assertIsNone(result.average_delay_seconds)
+        self.assertEqual(result.snapshots_captured_count, 3)
+        self.assertEqual(result.intervals_computed_count, 2)
         self.assertEqual(len(result.interval_results), 2)
         self.assertEqual(result.interval_results[-1].timestep, 4)
         self.assertGreater(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
@@ -211,6 +219,8 @@ class ExperimentRunnerTestCase(unittest.TestCase):
             model=_build_model(),
         )
 
+        self.assertEqual(result.snapshots_captured_count, 3)
+        self.assertEqual(result.intervals_computed_count, 2)
         self.assertEqual(result.snapshots, [])
         self.assertEqual(result.interval_results, [])
         self.assertGreater(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
