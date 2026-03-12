@@ -83,14 +83,54 @@ lower than the average-speed result:
 - The tracked VT-Micro coefficient file is still treated as provisional rather
   than final dissertation-ready calibration data.
 
+## Congestion sensitivity
+
+The Linlithgow case study was also compared between the tracked `baseline` and
+`peak-demand` variants for both current models.
+
+Observed changes under higher demand:
+
+- Average-speed model:
+  `16245.12 g -> 26270.96 g`,
+  `168.84 -> 169.12 g/km`,
+  delay `0.58 -> 0.64 s`
+- Speed-acceleration model:
+  `5458.34 g -> 9521.46 g`,
+  `56.73 -> 61.29 g/km`,
+  delay `0.58 -> 0.64 s`
+
+This is a plausible congestion-sensitivity pattern. Both models produce higher
+total CO2 and higher delay under heavier demand, and both also show a modest
+rise in g/km rather than an implausible flat or falling intensity.
+
+## Link hotspot plausibility
+
+Per-link aggregation was enabled for the Linlithgow baseline and peak-demand
+variants using the average-speed model to check whether the highest-emission
+links align with plausible town-centre corridors.
+
+Baseline top hotspot:
+
+- `tc_322847838_190546646_0` (`primary`), `908.97 g CO2`
+
+Peak-demand top hotspot:
+
+- `tc_863278826_324283489_0` (`residential`), `2791.11 g CO2`
+
+Across the top hotspot set, baseline emissions are concentrated on `primary`,
+`secondary`, `tertiary`, and similar through-movement links rather than on
+low-priority `service` edges. Under peak demand, emissions strengthen on major
+corridors and residential gateway connectors, which is plausible for a
+boundary-to-boundary town-centre demand pattern.
+
 ## Validation Process
 
 - [x] Compare both current models on the Linlithgow baseline.
 - [x] Record total CO2 and g/km for the same scenario.
 - [x] Check the outputs against broad published benchmarks.
 - [x] Record the strongest currently available local reference context.
-- [ ] Compare baseline and higher-demand Linlithgow variants for congestion
+- [x] Compare baseline and higher-demand Linlithgow variants for congestion
   sensitivity.
-- [ ] Inspect per-link outputs to check whether hotspots align with plausible
+- [x] Inspect per-link outputs to check whether hotspots align with plausible
   town-centre corridors.
 - [ ] Expand the validation note once those checks are complete.
