@@ -30,21 +30,13 @@ LINLITHGOW_METADATA_PATH = (
 def build_linlithgow_link_hotspot_validation_summary() -> list[str]:
     """Summarise top Linlithgow link hotspots for baseline and peak demand."""
 
-    import_config = load_town_centre_import_config(LINLITHGOW_METADATA_PATH)
-    links_table = pd.read_csv(
-        LINLITHGOW_METADATA_PATH.parent / import_config.processed_links_csv,
-        dtype={"name": str, "start_node": str, "end_node": str},
-    )
-    link_metadata = {row["name"]: row for _, row in links_table.iterrows()}
-
-    baseline_hotspots = _top_link_hotspots(
-        variant=TownCentreVariant.BASELINE,
-        link_metadata=link_metadata,
-    )
-    peak_hotspots = _top_link_hotspots(
-        variant=TownCentreVariant.PEAK_DEMAND,
-        link_metadata=link_metadata,
-    )
+    hotspot_rows = build_linlithgow_link_hotspot_rows()
+    baseline_hotspots = [
+        row for row in hotspot_rows if row["variant"] == TownCentreVariant.BASELINE.value
+    ]
+    peak_hotspots = [
+        row for row in hotspot_rows if row["variant"] == TownCentreVariant.PEAK_DEMAND.value
+    ]
 
     lines = ["Scenario family: linlithgow-town-centre"]
     lines.extend(
@@ -63,6 +55,30 @@ def build_linlithgow_link_hotspot_validation_summary() -> list[str]:
         f"Validation read-out: the top hotspot rises from {baseline_hotspots[0]['co2_g']:.2f} g to {peak_hotspots[0]['co2_g']:.2f} g under peak demand."
     )
     return lines
+
+
+def build_linlithgow_link_hotspot_rows() -> list[dict[str, object]]:
+    """Build reusable top-hotspot rows for Linlithgow link-level analysis."""
+
+    link_metadata = _load_link_metadata()
+    rows: list[dict[str, object]] = []
+
+    for variant in (TownCentreVariant.BASELINE, TownCentreVariant.PEAK_DEMAND):
+        for index, hotspot in enumerate(
+            _top_link_hotspots(variant=variant, link_metadata=link_metadata),
+            start=1,
+        ):
+            rows.append(
+                {
+                    "variant": variant.value,
+                    "rank": index,
+                    "link_id": hotspot["link_id"],
+                    "highway": hotspot["highway"],
+                    "co2_g": hotspot["co2_g"],
+                }
+            )
+
+    return rows
 
 
 def _top_link_hotspots(
@@ -103,6 +119,15 @@ def _top_link_hotspots(
         }
         for link_id, sample in hotspots
     ]
+
+
+def _load_link_metadata() -> dict[str, pd.Series]:
+    import_config = load_town_centre_import_config(LINLITHGOW_METADATA_PATH)
+    links_table = pd.read_csv(
+        LINLITHGOW_METADATA_PATH.parent / import_config.processed_links_csv,
+        dtype={"name": str, "start_node": str, "end_node": str},
+    )
+    return {row["name"]: row for _, row in links_table.iterrows()}
 
 
 def _format_hotspot_lines(
