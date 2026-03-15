@@ -1,4 +1,4 @@
-"""Write reusable Linlithgow analysis tables to generated CSV files."""
+"""Write reusable Linlithgow analysis tables and figures to generated files."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "outputs" / "linlithgow_analysis"
 def export_linlithgow_analysis_outputs(
     output_dir: Path | str = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Path]:
-    """Write the current Linlithgow analysis tables to generated CSV files."""
+    """Write the current Linlithgow analysis tables and figures."""
 
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -31,13 +31,19 @@ def export_linlithgow_analysis_outputs(
 
     run_table_path = output_path / "linlithgow_run_summary.csv"
     hotspot_table_path = output_path / "linlithgow_link_hotspots.csv"
+    figure_path = output_path / "linlithgow_intensity_chart.svg"
 
     _write_run_summary_csv(run_table_path, analysis_rows)
     _write_hotspot_csv(hotspot_table_path, hotspot_rows)
+    figure_path.write_text(
+        _build_intensity_chart_svg(analysis_rows),
+        encoding="utf-8",
+    )
 
     return {
         "run_summary_csv": run_table_path,
         "link_hotspots_csv": hotspot_table_path,
+        "intensity_chart_svg": figure_path,
     }
 
 
@@ -84,6 +90,69 @@ def _write_hotspot_csv(
             )
         )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _build_intensity_chart_svg(rows: list[dict[str, str]]) -> str:
+    width = 760
+    height = 360
+    chart_height = 220
+    chart_top = 60
+    chart_left = 70
+    bar_width = 120
+    gap = 35
+    colours = {
+        "average_speed": "#4E7A5D",
+        "speed_acceleration": "#B35C3B",
+    }
+
+    max_intensity = max(float(row["intensity_g_per_km"]) for row in rows)
+    bars: list[str] = []
+    labels: list[str] = []
+
+    for index, row in enumerate(rows):
+        intensity = float(row["intensity_g_per_km"])
+        bar_height = 0.0 if max_intensity <= 0 else chart_height * (
+            intensity / max_intensity
+        )
+        x = chart_left + index * (bar_width + gap)
+        y = chart_top + chart_height - bar_height
+        fill = colours[row["model_kind"]]
+        label = (
+            "Baseline avg"
+            if row["variant"] == "baseline" and row["model_kind"] == "average_speed"
+            else "Baseline VT"
+            if row["variant"] == "baseline"
+            else "Peak avg"
+            if row["model_kind"] == "average_speed"
+            else "Peak VT"
+        )
+        bars.append(
+            f'<rect x="{x}" y="{y:.1f}" width="{bar_width}" height="{bar_height:.1f}" fill="{fill}" />'
+        )
+        bars.append(
+            f'<text x="{x + bar_width / 2:.1f}" y="{y - 8:.1f}" text-anchor="middle" font-size="14">{intensity:.2f}</text>'
+        )
+        labels.append(
+            f'<text x="{x + bar_width / 2:.1f}" y="{chart_top + chart_height + 24}" text-anchor="middle" font-size="13">{label}</text>'
+        )
+
+    return "\n".join(
+        [
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+            '<rect width="100%" height="100%" fill="#F8F5EE" />',
+            '<text x="380" y="32" text-anchor="middle" font-size="22" font-family="Georgia, serif">Linlithgow Emission Intensity</text>',
+            f'<line x1="{chart_left}" y1="{chart_top + chart_height}" x2="{width - 40}" y2="{chart_top + chart_height}" stroke="#333" stroke-width="2" />',
+            f'<line x1="{chart_left}" y1="{chart_top}" x2="{chart_left}" y2="{chart_top + chart_height}" stroke="#333" stroke-width="2" />',
+            *bars,
+            *labels,
+            '<text x="26" y="174" transform="rotate(-90 26 174)" text-anchor="middle" font-size="14">g/km</text>',
+            '<rect x="540" y="46" width="16" height="16" fill="#4E7A5D" />',
+            '<text x="564" y="59" font-size="13">Average-speed</text>',
+            '<rect x="640" y="46" width="16" height="16" fill="#B35C3B" />',
+            '<text x="664" y="59" font-size="13">Speed-acceleration</text>',
+            "</svg>",
+        ]
+    )
 
 
 if __name__ == "__main__":
