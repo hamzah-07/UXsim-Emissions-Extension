@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 import sys
 
@@ -57,12 +58,22 @@ def _write_run_summary_csv(
     path: Path,
     rows: list[dict[str, str]],
 ) -> None:
-    lines = [
-        "scenario_name,variant,model_kind,runtime_seconds,total_co2_g,distance_m,intensity_g_per_km,average_delay_s"
-    ]
-    for row in rows:
-        lines.append(
-            ",".join(
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(
+            [
+                "scenario_name",
+                "variant",
+                "model_kind",
+                "runtime_seconds",
+                "total_co2_g",
+                "distance_m",
+                "intensity_g_per_km",
+                "average_delay_s",
+            ]
+        )
+        for row in rows:
+            writer.writerow(
                 [
                     row["scenario_name"],
                     row["variant"],
@@ -74,18 +85,17 @@ def _write_run_summary_csv(
                     row["average_delay_s"],
                 ]
             )
-        )
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def _write_hotspot_csv(
     path: Path,
     rows: list[dict[str, object]],
 ) -> None:
-    lines = ["variant,rank,link_id,highway,co2_g"]
-    for row in rows:
-        lines.append(
-            ",".join(
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["variant", "rank", "link_id", "highway", "co2_g"])
+        for row in rows:
+            writer.writerow(
                 [
                     str(row["variant"]),
                     str(row["rank"]),
@@ -94,8 +104,6 @@ def _write_hotspot_csv(
                     f"{float(row['co2_g']):.2f}",
                 ]
             )
-        )
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def _build_intensity_chart_svg(rows: list[dict[str, str]]) -> str:
