@@ -16,6 +16,8 @@ from experiments.linlithgow_link_hotspot_validation import (
     build_linlithgow_link_hotspot_rows,
 )
 
+# Keep generated analysis artefacts out of the repo tree while still giving the
+# dissertation workflow one predictable place to write them.
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "outputs" / "linlithgow_analysis"
 
 
@@ -27,6 +29,8 @@ def export_linlithgow_analysis_outputs(
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
+    # Build the shared analysis rows once so the CSV, SVG, and markdown exports
+    # stay aligned to the same read-out.
     analysis_rows = build_linlithgow_analysis_rows()
     hotspot_rows = build_linlithgow_link_hotspot_rows()
 
@@ -107,6 +111,8 @@ def _write_hotspot_csv(
 
 
 def _build_intensity_chart_svg(rows: list[dict[str, str]]) -> str:
+    # A small hand-written SVG keeps this first figure export lightweight and
+    # avoids turning Step 17 into a dependency-management job.
     width = 760
     height = 360
     chart_height = 220

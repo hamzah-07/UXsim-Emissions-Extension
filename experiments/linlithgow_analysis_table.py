@@ -31,6 +31,8 @@ def build_linlithgow_analysis_rows() -> list[dict[str, str]]:
 
     rows: list[dict[str, str]] = []
 
+    # Keep the row order stable so downstream tables and figures read
+    # consistently across repeated exports.
     for variant in (TownCentreVariant.BASELINE, TownCentreVariant.PEAK_DEMAND):
         for model_kind in (
             EmissionModelKind.AVERAGE_SPEED,

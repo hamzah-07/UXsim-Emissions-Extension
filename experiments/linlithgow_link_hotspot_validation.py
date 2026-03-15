@@ -101,6 +101,8 @@ def _top_link_hotspots(
     )
     result = runner.run(
         baseline_scenario=build_baseline_scenario(scenario),
+        # Keep the hotspot view on one stable model path for now so the spatial
+        # read-out stays easy to interpret in the validation notes.
         model=build_emission_model(
             EmissionModelConfig(kind=EmissionModelKind.AVERAGE_SPEED)
         ),
