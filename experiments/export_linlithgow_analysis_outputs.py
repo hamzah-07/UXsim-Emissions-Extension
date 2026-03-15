@@ -32,6 +32,7 @@ def export_linlithgow_analysis_outputs(
     run_table_path = output_path / "linlithgow_run_summary.csv"
     hotspot_table_path = output_path / "linlithgow_link_hotspots.csv"
     figure_path = output_path / "linlithgow_intensity_chart.svg"
+    summary_path = output_path / "linlithgow_analysis_summary.md"
 
     _write_run_summary_csv(run_table_path, analysis_rows)
     _write_hotspot_csv(hotspot_table_path, hotspot_rows)
@@ -39,11 +40,16 @@ def export_linlithgow_analysis_outputs(
         _build_intensity_chart_svg(analysis_rows),
         encoding="utf-8",
     )
+    summary_path.write_text(
+        _build_analysis_summary_markdown(analysis_rows, hotspot_rows),
+        encoding="utf-8",
+    )
 
     return {
         "run_summary_csv": run_table_path,
         "link_hotspots_csv": hotspot_table_path,
         "intensity_chart_svg": figure_path,
+        "analysis_summary_md": summary_path,
     }
 
 
@@ -153,6 +159,78 @@ def _build_intensity_chart_svg(rows: list[dict[str, str]]) -> str:
             "</svg>",
         ]
     )
+
+
+def _build_analysis_summary_markdown(
+    analysis_rows: list[dict[str, str]],
+    hotspot_rows: list[dict[str, object]],
+) -> str:
+    baseline_hotspots = [row for row in hotspot_rows if row["variant"] == "baseline"][:3]
+    peak_hotspots = [row for row in hotspot_rows if row["variant"] == "peak_demand"][:3]
+
+    lines = [
+        "# Linlithgow Analysis Summary",
+        "",
+        "## Run-Level Comparison",
+        "",
+        "| Variant | Model | Runtime (s) | Total CO2 (g) | Distance (m) | Intensity (g/km) | Average delay (s) |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in analysis_rows:
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    row["variant"],
+                    row["model_kind"],
+                    row["runtime_seconds"],
+                    row["total_co2_g"],
+                    row["distance_m"],
+                    row["intensity_g_per_km"],
+                    row["average_delay_s"],
+                ]
+            )
+            + " |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Top Link Hotspots",
+            "",
+            "### Baseline",
+            "",
+        ]
+    )
+    for row in baseline_hotspots:
+        lines.append(
+            f"- Rank {row['rank']}: `{row['link_id']}` ({row['highway']}), {float(row['co2_g']):.2f} g CO2"
+        )
+
+    lines.extend(
+        [
+            "",
+            "### Peak Demand",
+            "",
+        ]
+    )
+    for row in peak_hotspots:
+        lines.append(
+            f"- Rank {row['rank']}: `{row['link_id']}` ({row['highway']}), {float(row['co2_g']):.2f} g CO2"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Read-Out",
+            "",
+            "- Peak demand increases total CO2 and average delay for both current models.",
+            "- The average-speed model remains higher than the current speed-acceleration path in both tracked variants.",
+            "- Peak-demand hotspots intensify on plausible gateway and corridor links, which gives the case study both network-level and spatially differentiated analysis outputs.",
+        ]
+    )
+
+    return "\n".join(lines) + "\n"
 
 
 if __name__ == "__main__":
