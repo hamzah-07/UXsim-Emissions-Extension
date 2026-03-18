@@ -3,7 +3,7 @@
 This note records the first figure-ready analysis outputs produced for the
 Linlithgow town-centre case study.
 
-The goal of this step is to turn the validation and benchmark results into
+The goal of this note is to turn the validation and benchmark results into
 reusable analysis artefacts that can support dissertation tables, charts, and
 discussion without relying only on plain-text run summaries.
 
@@ -75,7 +75,7 @@ dissertation outputs:
 
 ## Current limitation
 
-These outputs are currently generated as CSV-style lines printed to stdout by
-their scripts. That is enough for a first analysis layer, but later Step 17
-work should make it easier to save them as files and turn them into plots or
+These outputs were initially generated as CSV-style lines printed to stdout by
+their scripts. That was enough for an early analysis layer, but the wider
+workflow now needs them to be saved as files and turned into plots or
 dissertation-ready tables automatically.

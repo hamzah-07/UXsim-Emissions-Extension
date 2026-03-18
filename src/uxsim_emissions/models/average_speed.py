@@ -111,6 +111,9 @@ class AverageSpeedCO2Model(EmissionModel):
                 distance_m=0.0,
             )
 
+        # This model is meant to represent interval-average behaviour, so the
+        # cleanest input is distance over elapsed time rather than the final
+        # snapshot speed on its own.
         average_speed_mps = distance_m / delta_time_s
         # TODO: later on, compare this snapshot-pair estimate against the
         # vehicle log route to see which one behaves better on longer runs.

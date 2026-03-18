@@ -45,9 +45,9 @@ network rather than a perfect digital twin. Initial assumptions are:
 - treat missing speed or lane metadata with explicit documented defaults
 - keep demand assumptions simple at first, then refine only if the baseline run is stable
 
-## Expected Step 14 Outputs
+## Expected Outputs
 
-Step 14 should leave the repo with:
+This case-study setup should leave the repo with:
 
 - a reproducible Linlithgow OSM import path
 - a processed UXsim-compatible town-centre network

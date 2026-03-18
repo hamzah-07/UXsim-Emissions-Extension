@@ -64,6 +64,8 @@ def build_town_centre_scenario_config(
 ) -> ScenarioConfig:
     """Build a runnable UXsim scenario config from processed town-centre files."""
 
+    # Keep node and link identifiers as strings so OSM-derived ids do not get
+    # coerced into numeric values and drift when we rebuild the case study.
     nodes_table = pd.read_csv(nodes_csv_path, dtype={"name": str})
     links_table = pd.read_csv(
         links_csv_path,

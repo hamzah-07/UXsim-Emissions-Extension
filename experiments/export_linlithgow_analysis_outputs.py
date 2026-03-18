@@ -112,7 +112,7 @@ def _write_hotspot_csv(
 
 def _build_intensity_chart_svg(rows: list[dict[str, str]]) -> str:
     # A small hand-written SVG keeps this first figure export lightweight and
-    # avoids turning Step 17 into a dependency-management job.
+    # avoids turning the analysis-output layer into a dependency-management job.
     width = 760
     height = 360
     chart_height = 220

@@ -106,6 +106,9 @@ class SpeedAccelerationCO2Model(EmissionModel):
             current_observation=current_observation,
             delta_time_s=delta_time_s,
         )
+        # VT-Micro is closer to an instantaneous-state model, so the current
+        # observation is our best mesoscopic stand-in for speed while the pair
+        # itself provides the elapsed duration and derived acceleration.
         # For VT-Micro, the real elapsed interval matters just as much as the
         # speed and acceleration values we derive from the pair.
         return self.compute(
