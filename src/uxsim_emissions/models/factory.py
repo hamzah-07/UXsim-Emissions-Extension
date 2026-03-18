@@ -34,8 +34,8 @@ def build_emission_model(config: EmissionModelConfig) -> EmissionModel:
         if config.factor_table_path is not None
         else _default_factor_table_path(config.kind)
     )
-    # Keep the first config-driven factory deliberately small: choose the model
-    # family, then hand off to the existing loader and model classes unchanged.
+    # Keep model selection centralised here so scripts can switch model family
+    # through config without each one rebuilding the same branching logic.
     if config.kind == EmissionModelKind.AVERAGE_SPEED:
         return AverageSpeedCO2Model(
             factor_table=load_average_speed_factor_table(factor_table_path)

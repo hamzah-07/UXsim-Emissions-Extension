@@ -63,6 +63,9 @@ class ExperimentRunner:
             )
             raw_interval_results.append(raw_interval_result)
             if self.logging_config.per_timestep:
+                # Keep the raw interval result separate from the retained one so
+                # headline run totals stay complete even when detailed logging
+                # is deliberately trimmed back.
                 snapshots.append(current_snapshot)
                 interval_results.append(
                     _filter_interval_result(

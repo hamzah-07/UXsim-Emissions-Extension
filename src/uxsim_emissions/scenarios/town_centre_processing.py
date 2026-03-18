@@ -56,6 +56,8 @@ def build_processed_town_centre_tables_from_frames(
         start_node = str(edge["u"])
         end_node = str(edge["v"])
         key = int(edge.get("key", edge_index))
+        # Give each retained edge one stable internal id so the later hotspot
+        # and case-study outputs can refer back to a concrete processed link.
         processed_links.append(
             {
                 "name": f"tc_{start_node}_{end_node}_{key}",
@@ -83,6 +85,8 @@ def build_processed_town_centre_tables_from_frames(
     )
     used_node_names = set(links_table["start_node"]) | set(links_table["end_node"])
 
+    # Drop unused OSM nodes at this stage so the tracked case-study artefacts
+    # contain only the network that UXsim will actually build and run.
     processed_nodes = (
         nodes_frame.reset_index()
         .assign(name=lambda frame: frame["osmid"].astype(str))
@@ -133,6 +137,8 @@ def _speed_mps_for_edge(
             speed_kph = speed_value * 1.609344 if "mph" in text else speed_value
             return speed_kph / 3.6
 
+    # When OSM speed tags are missing, fall back to explicit per-highway
+    # defaults so the preprocessing assumptions stay visible and reproducible.
     default_kph = rules.default_speed_kph_by_highway.get(
         str(highway), rules.default_speed_kph_by_highway["residential"]
     )
