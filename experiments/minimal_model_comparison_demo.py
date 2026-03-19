@@ -62,7 +62,7 @@ def build_model_comparison_summary() -> list[str]:
         f"Speed-acceleration CO2: {speed_accel_co2:.2f} g",
         f"Speed-acceleration intensity: {_intensity_g_per_km(speed_accel_co2, speed_accel_sample.distance_m):.2f} g/km",
         f"Difference: {speed_accel_co2 - average_speed_co2:.2f} g",
-        "Note: average-speed is still using starter factors, so this gap is provisional.",
+        "Note: average-speed now uses COPERT-derived representative factors, so this gap is still provisional.",
     ]
 
 

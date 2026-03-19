@@ -21,12 +21,12 @@ class LinlithgowModelComparisonTestCase(unittest.TestCase):
         output = "\n".join(lines)
 
         self.assertIn("Scenario: linlithgow-town-centre-baseline", output)
-        self.assertIn("Average-speed CO2: 16245.12 g", output)
-        self.assertIn("Average-speed intensity: 168.84 g/km", output)
+        self.assertIn("Average-speed CO2: 12210.88 g", output)
+        self.assertIn("Average-speed intensity: 126.91 g/km", output)
         self.assertIn("Speed-acceleration CO2: 5458.34 g", output)
         self.assertIn("Speed-acceleration intensity: 56.73 g/km", output)
-        self.assertIn("Difference: -10786.78 g", output)
-        self.assertIn("Intensity gap: -112.11 g/km", output)
+        self.assertIn("Difference: -6752.54 g", output)
+        self.assertIn("Intensity gap: -70.18 g/km", output)
         self.assertIn("validation plumbing", output)
 
 

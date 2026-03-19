@@ -19,11 +19,11 @@ class BaselineModelComparisonTestCase(unittest.TestCase):
         output = "\n".join(lines)
 
         self.assertIn("Scenario: baseline-two-link", output)
-        self.assertIn("Average-speed CO2: 100.98 g", output)
-        self.assertIn("Average-speed intensity: 189.10 g/km", output)
+        self.assertIn("Average-speed CO2: 76.24 g", output)
+        self.assertIn("Average-speed intensity: 142.77 g/km", output)
         self.assertIn("Speed-acceleration CO2: 29.10 g", output)
         self.assertIn("Speed-acceleration intensity: 54.49 g/km", output)
-        self.assertIn("Difference: -71.88 g", output)
+        self.assertIn("Difference: -47.14 g", output)
         self.assertIn("gap as provisional", output)
 
 

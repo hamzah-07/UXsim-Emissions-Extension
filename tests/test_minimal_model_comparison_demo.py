@@ -20,12 +20,12 @@ class MinimalModelComparisonDemoTestCase(unittest.TestCase):
 
         self.assertIn("Scenario: minimal-smoke", output)
         self.assertIn("Interval: timestep 5 at 5 s", output)
-        self.assertIn("Average-speed CO2: 1.81 g", output)
-        self.assertIn("Average-speed intensity: 181.00 g/km", output)
+        self.assertIn("Average-speed CO2: 1.36 g", output)
+        self.assertIn("Average-speed intensity: 135.96 g/km", output)
         self.assertIn("Speed-acceleration CO2: 0.30 g", output)
         self.assertIn("Speed-acceleration intensity: 29.95 g/km", output)
-        self.assertIn("Difference: -1.51 g", output)
-        self.assertIn("gap is provisional", output)
+        self.assertIn("Difference: -1.06 g", output)
+        self.assertIn("gap is still provisional", output)
 
 
 if __name__ == "__main__":

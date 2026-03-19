@@ -46,14 +46,14 @@ class ExportLinlithgowAnalysisOutputsTestCase(unittest.TestCase):
             hotspot_summary = exported["link_hotspots_csv"].read_text(encoding="utf-8")
             self.assertIn("variant,rank,link_id,highway,co2_g", hotspot_summary)
             self.assertIn(
-                "baseline,1,tc_322847838_190546646_0,primary,908.97",
+                "baseline,1,tc_322847838_190546646_0,primary,680.34",
                 hotspot_summary,
             )
 
             figure = exported["intensity_chart_svg"].read_text(encoding="utf-8")
             self.assertIn("<svg", figure)
             self.assertIn("Linlithgow Emission Intensity", figure)
-            self.assertIn("168.84", figure)
+            self.assertIn("126.91", figure)
 
             summary = exported["analysis_summary_md"].read_text(encoding="utf-8")
             self.assertIn("# Linlithgow Analysis Summary", summary)

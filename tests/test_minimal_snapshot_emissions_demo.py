@@ -20,8 +20,8 @@ class MinimalSnapshotEmissionsDemoTestCase(unittest.TestCase):
 
         self.assertIn("Scenario: minimal-smoke", output)
         self.assertIn("Interval: timestep 5 at 5 s", output)
-        self.assertIn("Total CO2: 1.81 g over 10.0 m", output)
-        self.assertIn("- veh_0: 1.81 g CO2 over 10.0 m", output)
+        self.assertIn("Total CO2: 1.36 g over 10.0 m", output)
+        self.assertIn("- veh_0: 1.36 g CO2 over 10.0 m", output)
 
 
 if __name__ == "__main__":

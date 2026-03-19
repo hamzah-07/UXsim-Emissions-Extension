@@ -27,12 +27,12 @@ class LinlithgowLinkHotspotTableTestCase(unittest.TestCase):
         self.assertEqual(rows[0]["rank"], 1)
         self.assertEqual(rows[0]["link_id"], "tc_322847838_190546646_0")
         self.assertEqual(rows[0]["highway"], "primary")
-        self.assertAlmostEqual(float(rows[0]["co2_g"]), 908.97, places=2)
+        self.assertAlmostEqual(float(rows[0]["co2_g"]), 680.34, places=2)
         self.assertEqual(rows[5]["variant"], "peak_demand")
         self.assertEqual(rows[5]["rank"], 1)
         self.assertEqual(rows[5]["link_id"], "tc_863278826_324283489_0")
         self.assertEqual(rows[5]["highway"], "residential")
-        self.assertAlmostEqual(float(rows[5]["co2_g"]), 2791.11, places=2)
+        self.assertAlmostEqual(float(rows[5]["co2_g"]), 2090.20, places=2)
 
     def test_hotspot_csv_lines_include_header_and_known_rows(self) -> None:
         lines = build_linlithgow_link_hotspot_csv_lines()
@@ -40,11 +40,11 @@ class LinlithgowLinkHotspotTableTestCase(unittest.TestCase):
 
         self.assertIn("variant,rank,link_id,highway,co2_g", output)
         self.assertIn(
-            "baseline,1,tc_322847838_190546646_0,primary,908.97",
+            "baseline,1,tc_322847838_190546646_0,primary,680.34",
             output,
         )
         self.assertIn(
-            "peak_demand,1,tc_863278826_324283489_0,residential,2791.11",
+            "peak_demand,1,tc_863278826_324283489_0,residential,2090.20",
             output,
         )
 

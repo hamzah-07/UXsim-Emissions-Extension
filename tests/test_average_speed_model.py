@@ -10,7 +10,11 @@ SRC_PATH = PROJECT_ROOT / "src"
 if str(SRC_PATH) not in sys.path:
     sys.path.insert(0, str(SRC_PATH))
 
-from uxsim_emissions.factors import load_average_speed_factor_table
+from uxsim_emissions.factors import (
+    AverageSpeedFactor,
+    AverageSpeedFactorTable,
+    load_average_speed_factor_table,
+)
 from uxsim_emissions.integration import UXsimAdapter
 from uxsim_emissions.integration.uxsim_adapter import VehicleObservation
 from uxsim_emissions.models import AverageSpeedCO2Model
@@ -26,31 +30,62 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
             / "emission_factors"
             / "starter_average_speed_co2_factors.csv"
         )
+        cls.override_factor_table = AverageSpeedFactorTable(
+            [
+                AverageSpeedFactor(
+                    vehicle_type="passenger_car",
+                    pollutant="co2",
+                    speed_kph=30,
+                    emission_g_per_km=190.0,
+                ),
+                AverageSpeedFactor(
+                    vehicle_type="passenger_car",
+                    pollutant="co2",
+                    speed_kph=50,
+                    emission_g_per_km=160.0,
+                ),
+                AverageSpeedFactor(
+                    vehicle_type="light_van",
+                    pollutant="co2",
+                    speed_kph=30,
+                    emission_g_per_km=240.0,
+                ),
+                AverageSpeedFactor(
+                    vehicle_type="light_van",
+                    pollutant="co2",
+                    speed_kph=50,
+                    emission_g_per_km=200.0,
+                ),
+            ]
+        )
 
     def test_computes_emission_at_exact_speed_band(self) -> None:
         model = AverageSpeedCO2Model(self.factor_table, default_vehicle_type="passenger_car")
 
         sample = model.compute(speed_mps=30 / 3.6, distance_m=1000)
 
-        self.assertEqual(sample.pollutants_g["co2"], 190.0)
+        self.assertEqual(sample.pollutants_g["co2"], 145.8)
         self.assertEqual(sample.distance_m, 1000)
 
     def test_interpolates_between_speed_bands(self) -> None:
         model = AverageSpeedCO2Model(self.factor_table, default_vehicle_type="passenger_car")
 
-        sample = model.compute(speed_mps=20 / 3.6, distance_m=1000)
+        sample = model.compute(speed_mps=25 / 3.6, distance_m=1000)
 
-        self.assertEqual(sample.pollutants_g["co2"], 255.0)
+        self.assertEqual(sample.pollutants_g["co2"], 162.5)
 
     def test_clamps_below_known_speed_range(self) -> None:
         model = AverageSpeedCO2Model(self.factor_table, default_vehicle_type="passenger_car")
 
         sample = model.compute(speed_mps=5 / 3.6, distance_m=1000)
 
-        self.assertEqual(sample.pollutants_g["co2"], 320.0)
+        self.assertEqual(sample.pollutants_g["co2"], 248.5)
 
     def test_uses_metadata_vehicle_type_override(self) -> None:
-        model = AverageSpeedCO2Model(self.factor_table, default_vehicle_type="passenger_car")
+        model = AverageSpeedCO2Model(
+            self.override_factor_table,
+            default_vehicle_type="passenger_car",
+        )
 
         sample = model.compute(
             speed_mps=30 / 3.6,
@@ -91,7 +126,7 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
             current_observation=current_observation,
         )
 
-        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.3596, places=6)
         self.assertEqual(sample.distance_m, 10.0)
 
     def test_compute_from_observation_pair_rejects_mismatched_vehicles(self) -> None:
@@ -157,7 +192,7 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
             current_observation=current_observation,
         )
 
-        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.3596, places=6)
         self.assertEqual(sample.distance_m, 10.0)
 
     def test_compute_from_observation_pair_falls_back_to_average_speed_when_needed(self) -> None:
@@ -192,7 +227,7 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
         )
 
         self.assertEqual(sample.distance_m, 10.0)
-        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.81, places=6)
+        self.assertAlmostEqual(sample.pollutants_g["co2"], 1.3596, places=6)
 
 
 if __name__ == "__main__":

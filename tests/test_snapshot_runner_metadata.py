@@ -12,7 +12,7 @@ if str(SRC_PATH) not in sys.path:
 
 from experiments.minimal_uxsim_smoke import build_smoke_world
 from uxsim_emissions.aggregation import run_average_speed_snapshot_interval_with_metadata
-from uxsim_emissions.factors import load_average_speed_factor_table
+from uxsim_emissions.factors import AverageSpeedFactor, AverageSpeedFactorTable
 from uxsim_emissions.integration import UXsimAdapter
 from uxsim_emissions.models import AverageSpeedCO2Model
 
@@ -20,11 +20,33 @@ from uxsim_emissions.models import AverageSpeedCO2Model
 class SnapshotRunnerMetadataTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        factor_table = load_average_speed_factor_table(
-            PROJECT_ROOT
-            / "data"
-            / "emission_factors"
-            / "starter_average_speed_co2_factors.csv"
+        factor_table = AverageSpeedFactorTable(
+            [
+                AverageSpeedFactor(
+                    vehicle_type="passenger_car",
+                    pollutant="co2",
+                    speed_kph=30,
+                    emission_g_per_km=190.0,
+                ),
+                AverageSpeedFactor(
+                    vehicle_type="passenger_car",
+                    pollutant="co2",
+                    speed_kph=50,
+                    emission_g_per_km=160.0,
+                ),
+                AverageSpeedFactor(
+                    vehicle_type="light_van",
+                    pollutant="co2",
+                    speed_kph=30,
+                    emission_g_per_km=240.0,
+                ),
+                AverageSpeedFactor(
+                    vehicle_type="light_van",
+                    pollutant="co2",
+                    speed_kph=50,
+                    emission_g_per_km=200.0,
+                ),
+            ]
         )
         cls.model = AverageSpeedCO2Model(factor_table)
 

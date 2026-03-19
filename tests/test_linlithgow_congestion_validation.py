@@ -22,8 +22,8 @@ class LinlithgowCongestionValidationTestCase(unittest.TestCase):
 
         self.assertIn("Scenario family: linlithgow-town-centre", output)
         self.assertIn("Average-speed baseline -> peak-demand:", output)
-        self.assertIn("16245.12 g -> 26270.96 g", output)
-        self.assertIn("168.84 -> 169.12 g/km", output)
+        self.assertIn("12210.88 g -> 19751.66 g", output)
+        self.assertIn("126.91 -> 127.15 g/km", output)
         self.assertIn("delay 0.58 -> 0.64 s", output)
         self.assertIn("Speed-acceleration baseline -> peak-demand:", output)
         self.assertIn("5458.34 g -> 9521.46 g", output)

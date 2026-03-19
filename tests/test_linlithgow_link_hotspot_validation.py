@@ -22,16 +22,16 @@ class LinlithgowLinkHotspotValidationTestCase(unittest.TestCase):
 
         self.assertIn("Scenario family: linlithgow-town-centre", output)
         self.assertIn(
-            "Baseline hotspot 1: tc_322847838_190546646_0 (primary), 908.97 g CO2",
+            "Baseline hotspot 1: tc_322847838_190546646_0 (primary), 680.34 g CO2",
             output,
         )
         self.assertIn(
-            "Peak-demand hotspot 1: tc_863278826_324283489_0 (residential), 2791.11 g CO2",
+            "Peak-demand hotspot 1: tc_863278826_324283489_0 (residential), 2090.20 g CO2",
             output,
         )
         self.assertIn("through-movement links", output)
         self.assertIn("residential gateway connectors", output)
-        self.assertIn("rises from 908.97 g to 2791.11 g", output)
+        self.assertIn("rises from 680.34 g to 2090.20 g", output)
 
 
 if __name__ == "__main__":
