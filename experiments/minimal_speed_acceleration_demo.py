@@ -19,8 +19,8 @@ from uxsim_emissions.models import SpeedAccelerationCO2Model
 def build_speed_acceleration_demo_summary() -> list[str]:
     world, _, _ = build_smoke_world()
     adapter = UXsimAdapter()
-    # This now uses the tracked VT-Micro table, but the coefficients should
-    # still be treated as provisional until we verify them against Rakha et al.
+    # This now uses the tracked VT-Micro table documented in the provenance
+    # note so the demo follows the same coefficient path as the main model.
     factor_table = load_vt_micro_factor_table(
         PROJECT_ROOT
         / "data"

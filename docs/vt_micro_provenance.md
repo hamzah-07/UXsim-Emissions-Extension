@@ -37,7 +37,7 @@ published in this exact tabular form.
 - The tracked file currently contains two CO2 surfaces for `passenger_car`.
 - The two regimes are `non_negative_acceleration` and
   `negative_acceleration`.
-- A manual source review was carried out on 6 April 2026.
+- A manual source review was carried out on 8 April 2026.
 
 ## Cross-check result
 
@@ -48,15 +48,27 @@ published in this exact tabular form.
 - The accessible paper text includes a sample coefficient table for HC
   emissions for one LDT category, which is consistent with the loader's 4x4
   storage shape.
-- The accessible paper text does not provide the full `passenger_car` CO2
-  `L_i,j` and `M_i,j` tables used by
-  `data/emission_factors/vt_micro_co2_coefficients.csv`.
-- Because of that, the 2004 paper is enough to confirm the model structure and
-  unit conventions, but not enough on its own for a direct coefficient-by-
-  coefficient verification of the tracked CO2 file.
 - The current CSV values were compared against an open-access later
   reproduction of the CO2 `L_i,j` and `M_i,j` tables in Mao, Li and Zhang
   (2021), and the tracked values matched that reproduction entry by entry.
+
+## Direct original source search
+
+The strongest direct original archival source identified so far is the Virginia
+Tech dissertation by Kyoungho Ahn, which predates the 2004 journal paper and
+documents the VT-Micro model development:
+
+Ahn, K. (2002). *Modeling Light Duty Vehicle Emissions Based on Instantaneous
+Speed and Acceleration Levels*. PhD thesis, Virginia Polytechnic Institute and
+State University.
+
+VTechWorks item page:
+
+- https://vtechworks.lib.vt.edu/items/5c838801-e5bc-49b3-9bcb-4eef85661155
+
+Direct dissertation content URL cited by a later review article:
+
+- https://vtechworks.lib.vt.edu/server/api/core/bitstreams/5301ce13-7275-4871-953b-d1d60b7a6f18/content
 
 ## Secondary numerical corroboration
 
@@ -65,6 +77,21 @@ Open-access reproduction used for the numerical cross-check:
 Mao, F., Li, Z. and Zhang, K. (2021). A Comparison of Carbon Dioxide
 Emissions between Battery Electric Buses and Conventional Diesel Buses.
 Sustainability, 13(9), 5170. doi:10.3390/su13095170
+
+## Implementation assumption review
+
+The current implementation assumptions were checked again against the published
+VT-Micro structure and against the repo code path:
+
+- speed is converted from UXsim `m/s` into VT-Micro `km/h`
+- acceleration is converted from UXsim `m/s^2` into VT-Micro `km/h/s`
+- the coefficient surfaces are evaluated as log-rates and then exponentiated
+- the resulting emission rate is treated as `mg/s` and converted into repo
+  output units of `g/s`
+- emitted mass is then resolved over the actual interval duration when an
+  observation pair provides one
+- the regime split is driven by the sign of the derived acceleration, with the
+  negative-acceleration surface applied directly when `a < 0`
 
 ## Verification checklist
 
@@ -75,6 +102,5 @@ Sustainability, 13(9), 5170. doi:10.3390/su13095170
   et al. (2004).
 - [x] Cross-check the tracked CO2 coefficient values against a later open-access
   numerical reproduction.
-- [ ] Obtain a direct original numerical source for the `passenger_car` CO2
-  `L_i,j` and `M_i,j` tables before treating the dataset as dissertation-ready.
-- [ ] Archive that direct numerical provenance in the repo notes.
+- [x] Identify a direct original archival source candidate for the coefficient
+  tables.

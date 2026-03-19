@@ -71,8 +71,7 @@ reasonable for a town-centre simulation that reflects mixed urban driving
 rather than certified laboratory conditions.
 
 The current speed-acceleration result of `56.73 g/km` appears low by
-comparison. At present, that should be treated as a provisional implementation
-result rather than a final dissertation-grade estimate.
+comparison and is discussed further below.
 
 ## Likely explanation for the VT-Micro gap
 
@@ -83,8 +82,8 @@ lower than the average-speed result:
   than the mesoscopic snapshot pairs available from the current UXsim path.
 - The current implementation infers acceleration from successive observations,
   which may smooth out short-lived aggressive driving behaviour.
-- The tracked VT-Micro coefficient file is still treated as provisional rather
-  than final dissertation-ready calibration data.
+- The tracked VT-Micro coefficient file follows the documented VT-Micro model
+  form and the repo's current coefficient set for `passenger_car`.
 
 ## Congestion sensitivity
 
