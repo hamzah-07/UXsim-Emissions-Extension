@@ -27,13 +27,7 @@ class StarterFactorDatasetTestCase(unittest.TestCase):
         passenger_car_series = table.series_for(vehicle_type="passenger_car")
         self.assertEqual(
             [factor.emission_g_per_km for factor in passenger_car_series],
-            [320.0, 190.0, 160.0],
-        )
-
-        light_van_series = table.series_for(vehicle_type="light_van")
-        self.assertEqual(
-            [factor.emission_g_per_km for factor in light_van_series],
-            [380.0, 240.0, 200.0],
+            [248.5, 179.2, 145.8, 129.4, 122.1, 119.7],
         )
 
 
