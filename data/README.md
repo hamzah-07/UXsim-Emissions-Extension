@@ -8,9 +8,22 @@ Suggested structure:
 - `fleet_profiles/` for vehicle mix assumptions
 - `osm/` for curated OSM extracts and preprocessing outputs
 
-The current `starter_average_speed_co2_factors.csv` file is only a small tracked
-starter table for loader and model integration work. It should be replaced or expanded
-with literature-backed factors before final experiments and evaluation.
+The tracked `starter_average_speed_co2_factors.csv` file now stores a small
+COPERT-derived representative CO2 table for the repo's simplified
+`passenger_car` average-speed model. The filename has been kept for
+compatibility with the existing loader and experiment paths, but the values are
+no longer placeholder data.
+
+The current table represents:
+
+- a medium petrol passenger car
+- Euro 6
+- Urban Peak driving conditions
+- speed bins from `10` to `60` `km/h`
+
+This is still a simplified representative curve rather than a full fleet model,
+so the dataset may be expanded later if the project needs more vehicle classes
+or a richer factor basis.
 
 The current `vt_micro_co2_coefficients.csv` file stores VT-Micro surfaces in the
 repo's own CSV layout so they are easy to load and diff. That layout is our

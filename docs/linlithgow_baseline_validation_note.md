@@ -14,12 +14,15 @@ using the same processed OSM network and the same demand profile.
 
 Current baseline results:
 
-- Average-speed model: `16245.12 g CO2` over `96218.3 m`, `168.84 g/km`
+- Average-speed model: `12210.88 g CO2` over `96218.3 m`, `126.91 g/km`
 - Speed-acceleration model: `5458.34 g CO2` over `96218.3 m`, `56.73 g/km`
 - Average delay in both runs: `0.58 s`
 
 Because the travelled distance and traffic state were the same in both runs,
 the gap is attributable to the emissions model rather than a scenario change.
+The average-speed path now uses a COPERT-derived representative factor curve
+for a medium petrol passenger car (Euro 6, Urban Peak) rather than the earlier
+placeholder table.
 
 ## Published reference context
 
@@ -61,7 +64,7 @@ This is not direct CO2 validation, but it does provide useful evidence that:
 
 ## Interpretation
 
-The current average-speed baseline result of `168.84 g/km` appears broadly
+The current average-speed baseline result of `126.91 g/km` appears broadly
 plausible as an in-use urban passenger-car estimate. It sits above the EEA
 new-car benchmark and below the EPA typical passenger-vehicle figure, which is
 reasonable for a town-centre simulation that reflects mixed urban driving
@@ -91,8 +94,8 @@ The Linlithgow case study was also compared between the tracked `baseline` and
 Observed changes under higher demand:
 
 - Average-speed model:
-  `16245.12 g -> 26270.96 g`,
-  `168.84 -> 169.12 g/km`,
+  `12210.88 g -> 19751.66 g`,
+  `126.91 -> 127.15 g/km`,
   delay `0.58 -> 0.64 s`
 - Speed-acceleration model:
   `5458.34 g -> 9521.46 g`,
@@ -111,11 +114,11 @@ links align with plausible town-centre corridors.
 
 Baseline top hotspot:
 
-- `tc_322847838_190546646_0` (`primary`), `908.97 g CO2`
+- `tc_322847838_190546646_0` (`primary`), `680.34 g CO2`
 
 Peak-demand top hotspot:
 
-- `tc_863278826_324283489_0` (`residential`), `2791.11 g CO2`
+- `tc_863278826_324283489_0` (`residential`), `2090.20 g CO2`
 
 Across the top hotspot set, baseline emissions are concentrated on `primary`,
 `secondary`, `tertiary`, and similar through-movement links rather than on
@@ -133,4 +136,4 @@ boundary-to-boundary town-centre demand pattern.
   sensitivity.
 - [x] Inspect per-link outputs to check whether hotspots align with plausible
   town-centre corridors.
-- [ ] Expand the validation note once those checks are complete.
+- [x] Expand the validation note once those checks are complete.
