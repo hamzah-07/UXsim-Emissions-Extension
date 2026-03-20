@@ -123,6 +123,26 @@ class TownCentreCaseStudyTestCase(unittest.TestCase):
         self.assertEqual(sum(len(demand.departure_times_s) for demand in baseline.demands), 20)
         self.assertEqual(sum(len(demand.departure_times_s) for demand in peak_demand.demands), 32)
 
+    def test_builds_tracked_linlithgow_fixed_time_baseline_config(self) -> None:
+        metadata_path = PROJECT_ROOT / "scenarios" / "town_centre" / "linlithgow_metadata.json"
+
+        fixed_time = build_tracked_town_centre_scenario_config(
+            metadata_path=metadata_path,
+            use_fixed_time_signals=True,
+        )
+
+        self.assertEqual(
+            fixed_time.name,
+            "linlithgow-town-centre-baseline-fixed-time-signals",
+        )
+        node_by_name = {node.name: node for node in fixed_time.nodes}
+        link_by_name = {link.name: link for link in fixed_time.links}
+        self.assertEqual(node_by_name["3200728316"].signal, (35.0, 25.0))
+        self.assertEqual(
+            link_by_name["tc_863303607_3200728316_0"].signal_group,
+            (1,),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

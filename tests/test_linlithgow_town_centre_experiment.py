@@ -36,6 +36,20 @@ class LinlithgowTownCentreExperimentTestCase(unittest.TestCase):
         self.assertIn("Scenario: linlithgow-town-centre-peak-demand", output)
         self.assertIn("Total CO2:", output)
 
+    def test_summary_runs_for_fixed_time_signal_smoke_path(self) -> None:
+        lines = build_linlithgow_town_centre_summary(
+            use_fixed_time_signals=True,
+            max_intervals=1,
+        )
+        output = "\n".join(lines)
+
+        self.assertIn("Signals: fixed_time", output)
+        self.assertIn(
+            "Scenario: linlithgow-town-centre-baseline-fixed-time-signals",
+            output,
+        )
+        self.assertIn("Total CO2:", output)
+
 
 if __name__ == "__main__":
     unittest.main()

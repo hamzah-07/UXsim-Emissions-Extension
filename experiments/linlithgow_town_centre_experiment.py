@@ -28,6 +28,7 @@ def build_linlithgow_town_centre_summary(
     *,
     model_kind: EmissionModelKind | str = EmissionModelKind.AVERAGE_SPEED,
     variant: TownCentreVariant | str = TownCentreVariant.BASELINE,
+    use_fixed_time_signals: bool = False,
     interval_steps: int = 10,
     max_intervals: int | None = None,
 ) -> list[str]:
@@ -48,6 +49,7 @@ def build_linlithgow_town_centre_summary(
     scenario = build_tracked_town_centre_scenario_config(
         metadata_path=LINLITHGOW_METADATA_PATH,
         variant=variant,
+        use_fixed_time_signals=use_fixed_time_signals,
     )
     result = runner.run(
         baseline_scenario=build_baseline_scenario(scenario),
@@ -56,6 +58,7 @@ def build_linlithgow_town_centre_summary(
     return [
         f"Model: {model.name}",
         f"Variant: {TownCentreVariant(variant).value}",
+        f"Signals: {'fixed_time' if use_fixed_time_signals else 'none'}",
         *build_experiment_summary_lines(result),
     ]
 

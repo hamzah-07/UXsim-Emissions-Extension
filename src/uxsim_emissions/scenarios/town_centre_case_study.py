@@ -66,6 +66,7 @@ def build_town_centre_scenario_config(
     links_csv_path: Path | str,
     demand_profile_path: Path | str,
     signal_plan_path: Path | str | None = None,
+    scenario_name_suffix: str | None = None,
 ) -> ScenarioConfig:
     """Build a runnable UXsim scenario config from processed town-centre files."""
 
@@ -98,7 +99,11 @@ def build_town_centre_scenario_config(
     )
 
     return ScenarioConfig(
-        name=f"{_slugify(import_config.study_area)}-{demand_profile.name}",
+        name=_scenario_name(
+            study_area=import_config.study_area,
+            demand_profile_name=demand_profile.name,
+            scenario_name_suffix=scenario_name_suffix,
+        ),
         nodes=[
             NodeConfig(
                 name=str(row["name"]),
@@ -130,6 +135,7 @@ def build_tracked_town_centre_scenario_config(
     *,
     metadata_path: Path | str,
     variant: TownCentreVariant | str = TownCentreVariant.BASELINE,
+    use_fixed_time_signals: bool = False,
 ) -> ScenarioConfig:
     """Build a tracked town-centre scenario config from committed artefacts."""
 
@@ -142,14 +148,33 @@ def build_tracked_town_centre_scenario_config(
         if variant_value is TownCentreVariant.BASELINE
         else import_config.intervention_demand_profile_json
     )
+    signal_plan_path = (
+        case_study_dir / import_config.fixed_time_signal_plan_json
+        if use_fixed_time_signals
+        else None
+    )
 
     return build_town_centre_scenario_config(
         import_config=import_config,
         nodes_csv_path=case_study_dir / import_config.processed_nodes_csv,
         links_csv_path=case_study_dir / import_config.processed_links_csv,
         demand_profile_path=case_study_dir / demand_profile_name,
+        signal_plan_path=signal_plan_path,
+        scenario_name_suffix="fixed-time-signals" if use_fixed_time_signals else None,
     )
 
 
 def _slugify(value: str) -> str:
     return value.lower().replace(" ", "-")
+
+
+def _scenario_name(
+    *,
+    study_area: str,
+    demand_profile_name: str,
+    scenario_name_suffix: str | None,
+) -> str:
+    base_name = f"{_slugify(study_area)}-{demand_profile_name}"
+    if scenario_name_suffix is None:
+        return base_name
+    return f"{base_name}-{scenario_name_suffix}"
