@@ -50,6 +50,32 @@ class OSMPreprocessingRules:
     simplify_junctions: bool = True
 
 
+@dataclass(slots=True)
+class SignalNodePlan:
+    """Fixed-time signal timings for one named town-centre node."""
+
+    node_name: str
+    signal: tuple[float, ...]
+    signal_offset_s: float = 0.0
+
+
+@dataclass(slots=True)
+class LinkSignalGroupPlan:
+    """Signal-group assignment for one named incoming link."""
+
+    link_name: str
+    signal_group: tuple[int, ...]
+
+
+@dataclass(slots=True)
+class TownCentreSignalPlan:
+    """Structured signal-plan overlay for a town-centre scenario."""
+
+    name: str
+    node_plans: list[SignalNodePlan]
+    link_plans: list[LinkSignalGroupPlan]
+
+
 def load_town_centre_import_config(
     metadata_path: Path | str,
 ) -> TownCentreImportConfig:
@@ -84,6 +110,32 @@ def load_town_centre_import_config(
         intervention_demand_profile_json=str(
             planned_outputs["intervention_demand_profile_json"]
         ),
+    )
+
+
+def load_town_centre_signal_plan(path: Path | str) -> TownCentreSignalPlan:
+    """Load a machine-readable fixed-time signal plan."""
+
+    with Path(path).open("r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+
+    return TownCentreSignalPlan(
+        name=str(payload["name"]),
+        node_plans=[
+            SignalNodePlan(
+                node_name=str(node_plan["node_name"]),
+                signal=tuple(float(value) for value in node_plan["signal"]),
+                signal_offset_s=float(node_plan.get("signal_offset_s", 0.0)),
+            )
+            for node_plan in payload["node_plans"]
+        ],
+        link_plans=[
+            LinkSignalGroupPlan(
+                link_name=str(link_plan["link_name"]),
+                signal_group=tuple(int(value) for value in link_plan["signal_group"]),
+            )
+            for link_plan in payload["link_plans"]
+        ],
     )
 
 

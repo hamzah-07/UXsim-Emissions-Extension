@@ -17,19 +17,26 @@ from .town_centre_processing import (
     write_processed_town_centre_tables,
 )
 from .town_centre import (
+    LinkSignalGroupPlan,
     OSMBoundingBox,
     OSMPreprocessingRules,
+    SignalNodePlan,
     TownCentreImportConfig,
+    TownCentreSignalPlan,
     linlithgow_preprocessing_rules,
     load_town_centre_import_config,
+    load_town_centre_signal_plan,
 )
 
 __all__ = [
+    "LinkSignalGroupPlan",
     "OSMBoundingBox",
     "OSMPreprocessingRules",
     "ScenarioKind",
+    "SignalNodePlan",
     "TownCentreDemandProfile",
     "TownCentreImportConfig",
+    "TownCentreSignalPlan",
     "TownCentreVariant",
     "baseline_two_link_scenario_config",
     "build_processed_town_centre_tables_from_frames",
@@ -41,6 +48,7 @@ __all__ = [
     "linlithgow_preprocessing_rules",
     "load_town_centre_demand_profile",
     "load_town_centre_import_config",
+    "load_town_centre_signal_plan",
     "merge_validation_scenario_config",
     "write_processed_town_centre_tables",
 ]
