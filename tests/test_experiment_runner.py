@@ -226,6 +226,21 @@ class ExperimentRunnerTestCase(unittest.TestCase):
         self.assertGreater(result.totals.total_sample.pollutants_g.get("co2", 0.0), 0.0)
         self.assertEqual(list(result.totals.link_samples), ["orig_dest"])
 
+    def test_runner_calls_signal_control_hook_after_each_interval(self) -> None:
+        runner = ExperimentRunner(interval_steps=2)
+        hook_timesteps: list[int | None] = []
+
+        result = runner.run(
+            baseline_scenario=build_baseline_scenario(SCENARIO_CONFIG),
+            model=_build_model(),
+            signal_control_hook=lambda _world, snapshot: hook_timesteps.append(
+                snapshot.timestep
+            ),
+        )
+
+        self.assertEqual(hook_timesteps, [2, 4])
+        self.assertEqual(result.intervals_computed_count, 2)
+
 
 def _build_model() -> AverageSpeedCO2Model:
     factor_table = load_average_speed_factor_table(FACTOR_TABLE_PATH)

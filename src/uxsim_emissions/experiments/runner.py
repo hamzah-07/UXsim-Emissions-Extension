@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field
 from time import perf_counter
+from typing import Callable
 
 from uxsim_emissions.aggregation import EmissionCollector, SnapshotIntervalEmissionResult
 from uxsim_emissions.config import LoggingConfig
@@ -28,6 +29,7 @@ class ExperimentRunner:
         *,
         baseline_scenario: BaselineScenario,
         model: AverageSpeedCO2Model | SpeedAccelerationCO2Model,
+        signal_control_hook: Callable[[object, WorldObservationSnapshot], None] | None = None,
     ) -> ExperimentRunResult:
         if self.interval_steps <= 0:
             raise ValueError("interval_steps must be positive")
@@ -56,6 +58,10 @@ class ExperimentRunner:
             world.exec_simulation(duration_t2=self.interval_steps)
             current_snapshot = adapter.capture_snapshot(world)
             snapshots_captured_count += 1
+            if signal_control_hook is not None:
+                # Keep the hook outside the core emissions logic so later
+                # signal-control experiments can steer the same run loop.
+                signal_control_hook(world, current_snapshot)
             raw_interval_result = _run_snapshot_interval(
                 model=model,
                 previous_snapshot=previous_snapshot,
