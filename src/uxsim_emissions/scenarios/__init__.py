@@ -16,6 +16,7 @@ from .town_centre_processing import (
     fetch_town_centre_drive_graph,
     write_processed_town_centre_tables,
 )
+from .town_centre_signals import QueueResponsiveSignalController
 from .town_centre import (
     LinkSignalGroupPlan,
     OSMBoundingBox,
@@ -32,6 +33,7 @@ __all__ = [
     "LinkSignalGroupPlan",
     "OSMBoundingBox",
     "OSMPreprocessingRules",
+    "QueueResponsiveSignalController",
     "ScenarioKind",
     "SignalNodePlan",
     "TownCentreDemandProfile",
