@@ -19,6 +19,7 @@
   "planned_outputs": {
     "processed_nodes_csv": "linlithgow_nodes.csv",
     "processed_links_csv": "linlithgow_links.csv",
+    "fixed_time_signal_plan_json": "linlithgow_fixed_time_signals.json",
     "baseline_demand_notes": "baseline_demand_assumptions.md",
     "baseline_demand_profile_json": "linlithgow_baseline_demands.json",
     "intervention_demand_profile_json": "linlithgow_peak_demand_demands.json"

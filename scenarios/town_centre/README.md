@@ -13,5 +13,6 @@ OSM-backed case study.
 
 - raw OSM input metadata
 - processed network artefacts for UXsim compatibility
+- fixed-time signal-plan inputs for controlled signal experiments
 - baseline demand assumptions
 - case-study notes that support later validation and analysis

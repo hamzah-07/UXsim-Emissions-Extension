@@ -19,6 +19,10 @@ class TownCentreMetadataTestCase(unittest.TestCase):
         self.assertEqual(metadata["planned_outputs"]["processed_nodes_csv"], "linlithgow_nodes.csv")
         self.assertEqual(metadata["planned_outputs"]["processed_links_csv"], "linlithgow_links.csv")
         self.assertEqual(
+            metadata["planned_outputs"]["fixed_time_signal_plan_json"],
+            "linlithgow_fixed_time_signals.json",
+        )
+        self.assertEqual(
             metadata["planned_outputs"]["baseline_demand_profile_json"],
             "linlithgow_baseline_demands.json",
         )
