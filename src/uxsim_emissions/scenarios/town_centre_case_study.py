@@ -136,6 +136,7 @@ def build_tracked_town_centre_scenario_config(
     metadata_path: Path | str,
     variant: TownCentreVariant | str = TownCentreVariant.BASELINE,
     use_fixed_time_signals: bool = False,
+    scenario_name_suffix: str | None = None,
 ) -> ScenarioConfig:
     """Build a tracked town-centre scenario config from committed artefacts."""
 
@@ -160,7 +161,11 @@ def build_tracked_town_centre_scenario_config(
         links_csv_path=case_study_dir / import_config.processed_links_csv,
         demand_profile_path=case_study_dir / demand_profile_name,
         signal_plan_path=signal_plan_path,
-        scenario_name_suffix="fixed-time-signals" if use_fixed_time_signals else None,
+        scenario_name_suffix=(
+            scenario_name_suffix
+            if scenario_name_suffix is not None
+            else "fixed-time-signals" if use_fixed_time_signals else None
+        ),
     )
 
 

@@ -16,7 +16,10 @@ from .town_centre_processing import (
     fetch_town_centre_drive_graph,
     write_processed_town_centre_tables,
 )
-from .town_centre_signals import QueueResponsiveSignalController
+from .town_centre_signals import (
+    QueueResponsiveSignalController,
+    build_linlithgow_queue_responsive_controller,
+)
 from .town_centre import (
     LinkSignalGroupPlan,
     OSMBoundingBox,
@@ -44,6 +47,7 @@ __all__ = [
     "build_processed_town_centre_tables_from_frames",
     "build_processed_town_centre_tables_from_graph",
     "build_scenario_config",
+    "build_linlithgow_queue_responsive_controller",
     "build_tracked_town_centre_scenario_config",
     "build_town_centre_scenario_config",
     "fetch_town_centre_drive_graph",

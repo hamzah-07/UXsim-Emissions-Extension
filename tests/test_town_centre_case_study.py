@@ -143,6 +143,20 @@ class TownCentreCaseStudyTestCase(unittest.TestCase):
             (1,),
         )
 
+    def test_builds_tracked_linlithgow_responsive_signal_config(self) -> None:
+        metadata_path = PROJECT_ROOT / "scenarios" / "town_centre" / "linlithgow_metadata.json"
+
+        responsive = build_tracked_town_centre_scenario_config(
+            metadata_path=metadata_path,
+            use_fixed_time_signals=True,
+            scenario_name_suffix="responsive-signals",
+        )
+
+        self.assertEqual(
+            responsive.name,
+            "linlithgow-town-centre-baseline-responsive-signals",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

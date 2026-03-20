@@ -50,6 +50,20 @@ class LinlithgowTownCentreExperimentTestCase(unittest.TestCase):
         )
         self.assertIn("Total CO2:", output)
 
+    def test_summary_runs_for_responsive_signal_smoke_path(self) -> None:
+        lines = build_linlithgow_town_centre_summary(
+            use_responsive_signals=True,
+            max_intervals=1,
+        )
+        output = "\n".join(lines)
+
+        self.assertIn("Signals: responsive", output)
+        self.assertIn(
+            "Scenario: linlithgow-town-centre-baseline-responsive-signals",
+            output,
+        )
+        self.assertIn("Total CO2:", output)
+
 
 if __name__ == "__main__":
     unittest.main()

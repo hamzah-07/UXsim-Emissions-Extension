@@ -34,3 +34,16 @@ class QueueResponsiveSignalController:
         if group_1_queue > group_0_queue:
             return (self.group_1_green_s, self.group_0_green_s)
         return (self.group_0_green_s, self.group_1_green_s)
+
+
+def build_linlithgow_queue_responsive_controller() -> QueueResponsiveSignalController:
+    """Build the tracked responsive controller for the Linlithgow signal test."""
+
+    return QueueResponsiveSignalController(
+        node_name="3200728316",
+        group_0_links=(
+            "tc_1051498106_3200728316_0",
+            "tc_1051503017_3200728316_0",
+        ),
+        group_1_links=("tc_863303607_3200728316_0",),
+    )
