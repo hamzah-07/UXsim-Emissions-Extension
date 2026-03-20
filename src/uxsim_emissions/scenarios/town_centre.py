@@ -33,6 +33,7 @@ class TownCentreImportConfig:
     raw_osm_basename: str
     processed_nodes_csv: str
     processed_links_csv: str
+    fixed_time_signal_plan_json: str
     baseline_demand_notes: str
     baseline_demand_profile_json: str
     intervention_demand_profile_json: str
@@ -105,6 +106,7 @@ def load_town_centre_import_config(
         raw_osm_basename=str(planned_inputs["raw_osm_basename"]),
         processed_nodes_csv=str(planned_outputs["processed_nodes_csv"]),
         processed_links_csv=str(planned_outputs["processed_links_csv"]),
+        fixed_time_signal_plan_json=str(planned_outputs["fixed_time_signal_plan_json"]),
         baseline_demand_notes=str(planned_outputs["baseline_demand_notes"]),
         baseline_demand_profile_json=str(planned_outputs["baseline_demand_profile_json"]),
         intervention_demand_profile_json=str(

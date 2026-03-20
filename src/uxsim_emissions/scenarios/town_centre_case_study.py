@@ -11,7 +11,11 @@ import pandas as pd
 
 from uxsim_emissions.config import DemandConfig, LinkConfig, NodeConfig, ScenarioConfig
 
-from .town_centre import TownCentreImportConfig, load_town_centre_import_config
+from .town_centre import (
+    TownCentreImportConfig,
+    load_town_centre_import_config,
+    load_town_centre_signal_plan,
+)
 
 
 @dataclass(slots=True)
@@ -61,6 +65,7 @@ def build_town_centre_scenario_config(
     nodes_csv_path: Path | str,
     links_csv_path: Path | str,
     demand_profile_path: Path | str,
+    signal_plan_path: Path | str | None = None,
 ) -> ScenarioConfig:
     """Build a runnable UXsim scenario config from processed town-centre files."""
 
@@ -76,6 +81,21 @@ def build_town_centre_scenario_config(
         },
     )
     demand_profile = load_town_centre_demand_profile(demand_profile_path)
+    signal_plan = (
+        load_town_centre_signal_plan(signal_plan_path)
+        if signal_plan_path is not None
+        else None
+    )
+    node_signals = (
+        {plan.node_name: plan.signal for plan in signal_plan.node_plans}
+        if signal_plan is not None
+        else {}
+    )
+    link_signal_groups = (
+        {plan.link_name: plan.signal_group for plan in signal_plan.link_plans}
+        if signal_plan is not None
+        else {}
+    )
 
     return ScenarioConfig(
         name=f"{_slugify(import_config.study_area)}-{demand_profile.name}",
@@ -84,6 +104,7 @@ def build_town_centre_scenario_config(
                 name=str(row["name"]),
                 x=float(row["x"]),
                 y=float(row["y"]),
+                signal=node_signals.get(str(row["name"]), (0.0,)),
             )
             for _, row in nodes_table.iterrows()
         ],
@@ -96,6 +117,7 @@ def build_town_centre_scenario_config(
                 free_flow_speed_mps=float(row["free_flow_speed_mps"]),
                 jam_density=float(row.get("jam_density", 0.2)),
                 number_of_lanes=int(row.get("number_of_lanes", 1)),
+                signal_group=link_signal_groups.get(str(row["name"]), (0,)),
             )
             for _, row in links_table.iterrows()
         ],

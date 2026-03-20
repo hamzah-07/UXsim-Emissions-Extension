@@ -26,6 +26,10 @@ class TownCentreImportConfigTestCase(unittest.TestCase):
         self.assertEqual(config.processed_nodes_csv, "linlithgow_nodes.csv")
         self.assertEqual(config.processed_links_csv, "linlithgow_links.csv")
         self.assertEqual(
+            config.fixed_time_signal_plan_json,
+            "linlithgow_fixed_time_signals.json",
+        )
+        self.assertEqual(
             config.baseline_demand_profile_json,
             "linlithgow_baseline_demands.json",
         )
