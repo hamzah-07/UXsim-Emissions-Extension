@@ -29,14 +29,13 @@ between the two runs.
 
 ## Fixed-Time Baseline
 
-The fixed-time baseline uses one tracked signal plan at node `3200728316`.
+The fixed-time baseline uses one tracked signal plan at node `243662941`.
 
 - phase split: `35 s / 25 s`
 - group 0 links:
-  - `tc_1051498106_3200728316_0`
-  - `tc_1051503017_3200728316_0`
+  - `tc_863372585_243662941_0`
 - group 1 link:
-  - `tc_863303607_3200728316_0`
+  - `tc_410182009_243662941_0`
 
 This provides a simple reproducible baseline control policy without adding a
 larger hand-built signal network.

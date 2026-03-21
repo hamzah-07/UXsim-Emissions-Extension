@@ -2,22 +2,18 @@
   "name": "linlithgow_fixed_time_baseline",
   "node_plans": [
     {
-      "node_name": "3200728316",
+      "node_name": "243662941",
       "signal": [35.0, 25.0],
       "signal_offset_s": 0.0
     }
   ],
   "link_plans": [
     {
-      "link_name": "tc_1051498106_3200728316_0",
+      "link_name": "tc_863372585_243662941_0",
       "signal_group": [0]
     },
     {
-      "link_name": "tc_1051503017_3200728316_0",
-      "signal_group": [0]
-    },
-    {
-      "link_name": "tc_863303607_3200728316_0",
+      "link_name": "tc_410182009_243662941_0",
       "signal_group": [1]
     }
   ]

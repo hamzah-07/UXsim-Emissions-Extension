@@ -45,10 +45,7 @@ def build_linlithgow_queue_responsive_controller() -> QueueResponsiveSignalContr
     # Reuse the same junction and link groups as the fixed-time baseline so
     # the intervention changes the control policy rather than the layout.
     return QueueResponsiveSignalController(
-        node_name="3200728316",
-        group_0_links=(
-            "tc_1051498106_3200728316_0",
-            "tc_1051503017_3200728316_0",
-        ),
-        group_1_links=("tc_863303607_3200728316_0",),
+        node_name="243662941",
+        group_0_links=("tc_863372585_243662941_0",),
+        group_1_links=("tc_410182009_243662941_0",),
     )

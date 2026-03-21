@@ -137,9 +137,9 @@ class TownCentreCaseStudyTestCase(unittest.TestCase):
         )
         node_by_name = {node.name: node for node in fixed_time.nodes}
         link_by_name = {link.name: link for link in fixed_time.links}
-        self.assertEqual(node_by_name["3200728316"].signal, (35.0, 25.0))
+        self.assertEqual(node_by_name["243662941"].signal, (35.0, 25.0))
         self.assertEqual(
-            link_by_name["tc_863303607_3200728316_0"].signal_group,
+            link_by_name["tc_410182009_243662941_0"].signal_group,
             (1,),
         )
 
