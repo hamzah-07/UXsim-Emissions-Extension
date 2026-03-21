@@ -13,6 +13,7 @@ if str(SRC_PATH) not in sys.path:
 from experiments.linlithgow_signal_policy_comparison import (
     build_linlithgow_signal_policy_comparison_summary,
 )
+from uxsim_emissions.scenarios import TownCentreVariant
 
 
 class LinlithgowSignalPolicyComparisonTestCase(unittest.TestCase):
@@ -28,6 +29,15 @@ class LinlithgowSignalPolicyComparisonTestCase(unittest.TestCase):
         self.assertIn("g/km", output)
         self.assertIn("delay", output)
         self.assertIn("runtime", output)
+
+    def test_summary_can_run_peak_demand_variant(self) -> None:
+        lines = build_linlithgow_signal_policy_comparison_summary(
+            variant=TownCentreVariant.PEAK_DEMAND,
+        )
+        output = "\n".join(lines)
+
+        self.assertIn("Demand variant: peak_demand", output)
+        self.assertIn("responsive / average_speed:", output)
 
 
 if __name__ == "__main__":

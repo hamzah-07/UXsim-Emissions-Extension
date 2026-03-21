@@ -15,6 +15,7 @@ from experiments.linlithgow_town_centre_experiment import (
     build_linlithgow_town_centre_summary,
 )
 from uxsim_emissions import EmissionModelKind
+from uxsim_emissions.scenarios import TownCentreVariant
 
 RUNTIME_PATTERN = re.compile(r"^Runtime: ([0-9.]+) s$")
 TOTAL_CO2_PATTERN = re.compile(r"^Total CO2: ([0-9.]+) g over ([0-9.]+) m$")
@@ -22,10 +23,17 @@ INTENSITY_PATTERN = re.compile(r"^Emission intensity: ([0-9.]+) g/km$")
 AVERAGE_DELAY_PATTERN = re.compile(r"^Average delay: ([0-9.]+) s$")
 
 
-def build_linlithgow_signal_policy_comparison_summary() -> list[str]:
+def build_linlithgow_signal_policy_comparison_summary(
+    *,
+    variant: TownCentreVariant | str = TownCentreVariant.BASELINE,
+) -> list[str]:
     """Build a compact cross-model comparison for Linlithgow signal policies."""
 
-    lines = ["Scenario family: linlithgow-town-centre-signal-policies"]
+    variant_value = TownCentreVariant(variant)
+    lines = [
+        "Scenario family: linlithgow-town-centre-signal-policies",
+        f"Demand variant: {variant_value.value}",
+    ]
     # Keep the output to one summary line per run so the comparison is easy to
     # drop into notes or a dissertation draft before we build richer exports.
     for signals_label, use_fixed_time_signals, use_responsive_signals in (
@@ -39,6 +47,7 @@ def build_linlithgow_signal_policy_comparison_summary() -> list[str]:
             metrics = _extract_metrics(
                 build_linlithgow_town_centre_summary(
                     model_kind=model_kind,
+                    variant=variant_value,
                     use_fixed_time_signals=use_fixed_time_signals,
                     use_responsive_signals=use_responsive_signals,
                 )
