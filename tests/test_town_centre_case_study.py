@@ -142,6 +142,10 @@ class TownCentreCaseStudyTestCase(unittest.TestCase):
             link_by_name["tc_410182009_243662941_0"].signal_group,
             (1,),
         )
+        self.assertEqual(
+            link_by_name["tc_369817321_243662941_0"].signal_group,
+            (0,),
+        )
 
     def test_builds_tracked_linlithgow_responsive_signal_config(self) -> None:
         metadata_path = PROJECT_ROOT / "scenarios" / "town_centre" / "linlithgow_metadata.json"

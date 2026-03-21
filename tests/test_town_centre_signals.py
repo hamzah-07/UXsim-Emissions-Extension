@@ -32,7 +32,10 @@ class TownCentreSignalsTestCase(unittest.TestCase):
             ],
         )
 
-        self.assertEqual(controller.signal_for_snapshot(snapshot), (25.0, 35.0))
+        decision = controller.decision_for_snapshot(snapshot)
+
+        self.assertEqual(decision.signal, (25.0, 35.0))
+        self.assertEqual(decision.reason, "group_1_queue_advantage")
 
     def test_controller_keeps_default_split_when_group_zero_is_busier(self) -> None:
         controller = QueueResponsiveSignalController(
@@ -51,16 +54,40 @@ class TownCentreSignalsTestCase(unittest.TestCase):
             ],
         )
 
-        self.assertEqual(controller.signal_for_snapshot(snapshot), (35.0, 25.0))
+        decision = controller.decision_for_snapshot(snapshot)
+
+        self.assertEqual(decision.signal, (35.0, 25.0))
+        self.assertEqual(decision.reason, "group_0_queue_advantage")
+
+    def test_controller_uses_vehicle_pressure_when_queues_tie(self) -> None:
+        controller = QueueResponsiveSignalController(
+            node_name="3200728316",
+            group_0_links=("a",),
+            group_1_links=("b",),
+        )
+        snapshot = WorldObservationSnapshot(
+            timestep=10,
+            time_s=10.0,
+            vehicle_observations=[],
+            link_observations=[
+                _link("a", 0.0, vehicles=1.0),
+                _link("b", 0.0, vehicles=3.0),
+            ],
+        )
+
+        decision = controller.decision_for_snapshot(snapshot)
+
+        self.assertEqual(decision.signal, (25.0, 35.0))
+        self.assertEqual(decision.reason, "group_1_vehicle_pressure")
 
 
-def _link(link_id: str, queue: float) -> LinkObservation:
+def _link(link_id: str, queue: float, vehicles: float | None = None) -> LinkObservation:
     return LinkObservation(
         link_id=link_id,
         speed_mps=0.0,
         density=0.0,
         flow=0.0,
-        num_vehicles=queue,
+        num_vehicles=queue if vehicles is None else vehicles,
         num_vehicles_queue=queue,
         length_m=10.0,
         timestep=10,
