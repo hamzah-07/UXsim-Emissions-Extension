@@ -56,6 +56,9 @@ def build_linlithgow_town_centre_summary(
     scenario = build_tracked_town_centre_scenario_config(
         metadata_path=LINLITHGOW_METADATA_PATH,
         variant=variant,
+        # The responsive experiment still needs the tracked signal geometry and
+        # group assignments from the fixed-time plan before the controller can
+        # start rebalancing the green split during the run.
         use_fixed_time_signals=use_fixed_time_signals or use_responsive_signals,
         scenario_name_suffix="responsive-signals" if use_responsive_signals else None,
     )

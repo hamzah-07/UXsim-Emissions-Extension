@@ -87,6 +87,8 @@ def build_town_centre_scenario_config(
         if signal_plan_path is not None
         else None
     )
+    # Build simple name-to-settings lookups once so the CSV row mapping stays
+    # easy to follow when we overlay a tracked signal plan onto the network.
     node_signals = (
         {plan.node_name: plan.signal for plan in signal_plan.node_plans}
         if signal_plan is not None
@@ -149,6 +151,8 @@ def build_tracked_town_centre_scenario_config(
         if variant_value is TownCentreVariant.BASELINE
         else import_config.intervention_demand_profile_json
     )
+    # Signal-policy experiments reuse the same tracked network and demand files;
+    # only the optional signal overlay and scenario label change.
     signal_plan_path = (
         case_study_dir / import_config.fixed_time_signal_plan_json
         if use_fixed_time_signals

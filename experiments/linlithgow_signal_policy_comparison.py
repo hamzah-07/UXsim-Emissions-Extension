@@ -26,6 +26,8 @@ def build_linlithgow_signal_policy_comparison_summary() -> list[str]:
     """Build a compact cross-model comparison for Linlithgow signal policies."""
 
     lines = ["Scenario family: linlithgow-town-centre-signal-policies"]
+    # Keep the output to one summary line per run so the comparison is easy to
+    # drop into notes or a dissertation draft before we build richer exports.
     for signals_label, use_fixed_time_signals, use_responsive_signals in (
         ("fixed_time", True, False),
         ("responsive", False, True),

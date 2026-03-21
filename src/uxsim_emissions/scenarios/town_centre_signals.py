@@ -25,6 +25,9 @@ class QueueResponsiveSignalController:
         self,
         snapshot: WorldObservationSnapshot,
     ) -> tuple[float, float]:
+        # Use the observed queued vehicles on each approach group as the
+        # smallest traffic-responsive signal input we can justify in the
+        # current case study without building a larger controller framework.
         queue_by_link = {
             observation.link_id: observation.num_vehicles_queue
             for observation in snapshot.link_observations
@@ -39,6 +42,8 @@ class QueueResponsiveSignalController:
 def build_linlithgow_queue_responsive_controller() -> QueueResponsiveSignalController:
     """Build the tracked responsive controller for the Linlithgow signal test."""
 
+    # Reuse the same junction and link groups as the fixed-time baseline so
+    # the intervention changes the control policy rather than the layout.
     return QueueResponsiveSignalController(
         node_name="3200728316",
         group_0_links=(
