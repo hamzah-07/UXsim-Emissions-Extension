@@ -121,6 +121,8 @@ def load_town_centre_signal_plan(path: Path | str) -> TownCentreSignalPlan:
     with Path(path).open("r", encoding="utf-8") as handle:
         payload = json.load(handle)
 
+    # Keep the signal plan as a separate overlay so the tracked road network
+    # artefacts stay reusable across fixed-time and responsive experiments.
     return TownCentreSignalPlan(
         name=str(payload["name"]),
         node_plans=[

@@ -32,6 +32,8 @@ class QueueResponsiveSignalController:
 
     def __call__(self, world: object, snapshot: WorldObservationSnapshot) -> None:
         decision = self.decision_for_snapshot(snapshot)
+        # Update only the phase split and leave the node layout untouched so
+        # the intervention changes control timing rather than junction shape.
         world.NODES_NAME_DICT[self.node_name].signal = list(decision.signal)
 
     def signal_for_snapshot(
@@ -58,6 +60,9 @@ class QueueResponsiveSignalController:
         group_1_vehicles = sum(
             vehicles_by_link.get(link_id, 0.0) for link_id in self.group_1_links
         )
+        # Prefer clear queue differences first, then fall back to total
+        # vehicles so the controller still makes a sensible choice when
+        # waiting queues are brief or balanced at the snapshot boundary.
         if group_1_queue >= group_0_queue + self.minimum_queue_advantage:
             return SignalDecision(
                 signal=(self.group_1_green_s, self.group_0_green_s),
