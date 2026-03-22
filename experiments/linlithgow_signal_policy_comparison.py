@@ -23,6 +23,45 @@ INTENSITY_PATTERN = re.compile(r"^Emission intensity: ([0-9.]+) g/km$")
 AVERAGE_DELAY_PATTERN = re.compile(r"^Average delay: ([0-9.]+) s$")
 
 
+def build_linlithgow_signal_policy_rows() -> list[dict[str, str]]:
+    """Build structured signal-policy rows across tracked demand variants."""
+
+    rows: list[dict[str, str]] = []
+    for variant_value in (
+        TownCentreVariant.BASELINE,
+        TownCentreVariant.PEAK_DEMAND,
+    ):
+        for signals_label, use_fixed_time_signals, use_responsive_signals in (
+            ("fixed_time", True, False),
+            ("responsive", False, True),
+        ):
+            for model_kind in (
+                EmissionModelKind.AVERAGE_SPEED,
+                EmissionModelKind.SPEED_ACCELERATION,
+            ):
+                metrics = _extract_metrics(
+                    build_linlithgow_town_centre_summary(
+                        model_kind=model_kind,
+                        variant=variant_value,
+                        use_fixed_time_signals=use_fixed_time_signals,
+                        use_responsive_signals=use_responsive_signals,
+                    )
+                )
+                rows.append(
+                    {
+                        "variant": variant_value.value,
+                        "signal_policy": signals_label,
+                        "model_kind": model_kind.value,
+                        "runtime_seconds": f"{metrics['runtime_seconds']:.3f}",
+                        "total_co2_g": f"{metrics['total_co2_g']:.2f}",
+                        "distance_m": f"{metrics['distance_m']:.1f}",
+                        "intensity_g_per_km": f"{metrics['intensity_g_per_km']:.2f}",
+                        "average_delay_s": f"{metrics['average_delay_s']:.2f}",
+                    }
+                )
+    return rows
+
+
 def build_linlithgow_signal_policy_comparison_summary(
     *,
     variant: TownCentreVariant | str = TownCentreVariant.BASELINE,
@@ -38,29 +77,16 @@ def build_linlithgow_signal_policy_comparison_summary(
     # drop into notes or a dissertation draft before we build richer exports.
     # The variant line lets the same helper report the baseline and heavier
     # demand stress cases without changing the row structure below.
-    for signals_label, use_fixed_time_signals, use_responsive_signals in (
-        ("fixed_time", True, False),
-        ("responsive", False, True),
-    ):
-        for model_kind in (
-            EmissionModelKind.AVERAGE_SPEED,
-            EmissionModelKind.SPEED_ACCELERATION,
-        ):
-            metrics = _extract_metrics(
-                build_linlithgow_town_centre_summary(
-                    model_kind=model_kind,
-                    variant=variant_value,
-                    use_fixed_time_signals=use_fixed_time_signals,
-                    use_responsive_signals=use_responsive_signals,
-                )
-            )
-            lines.append(
-                f"{signals_label} / {model_kind.value}: "
-                f"{metrics['total_co2_g']:.2f} g, "
-                f"{metrics['intensity_g_per_km']:.2f} g/km, "
-                f"delay {metrics['average_delay_s']:.2f} s, "
-                f"runtime {metrics['runtime_seconds']:.3f} s"
-            )
+    for row in build_linlithgow_signal_policy_rows():
+        if row["variant"] != variant_value.value:
+            continue
+        lines.append(
+            f"{row['signal_policy']} / {row['model_kind']}: "
+            f"{row['total_co2_g']} g, "
+            f"{row['intensity_g_per_km']} g/km, "
+            f"delay {row['average_delay_s']} s, "
+            f"runtime {row['runtime_seconds']} s"
+        )
     return lines
 
 
@@ -68,6 +94,7 @@ def _extract_metrics(lines: list[str]) -> dict[str, float]:
     metrics = {
         "runtime_seconds": 0.0,
         "total_co2_g": 0.0,
+        "distance_m": 0.0,
         "intensity_g_per_km": 0.0,
         "average_delay_s": 0.0,
     }
@@ -79,6 +106,7 @@ def _extract_metrics(lines: list[str]) -> dict[str, float]:
         total_match = TOTAL_CO2_PATTERN.match(line)
         if total_match is not None:
             metrics["total_co2_g"] = float(total_match.group(1))
+            metrics["distance_m"] = float(total_match.group(2))
             continue
         intensity_match = INTENSITY_PATTERN.match(line)
         if intensity_match is not None:
