@@ -60,7 +60,8 @@ class ExperimentRunner:
             snapshots_captured_count += 1
             if signal_control_hook is not None:
                 # Keep the hook outside the core emissions logic so later
-                # signal-control experiments can steer the same run loop.
+                # signal-control experiments can steer the same run loop using
+                # the latest observed network state without forking the runner.
                 signal_control_hook(world, current_snapshot)
             raw_interval_result = _run_snapshot_interval(
                 model=model,

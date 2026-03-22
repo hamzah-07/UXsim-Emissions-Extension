@@ -36,6 +36,8 @@ def build_linlithgow_signal_policy_comparison_summary(
     ]
     # Keep the output to one summary line per run so the comparison is easy to
     # drop into notes or a dissertation draft before we build richer exports.
+    # The variant line lets the same helper report the baseline and heavier
+    # demand stress cases without changing the row structure below.
     for signals_label, use_fixed_time_signals, use_responsive_signals in (
         ("fixed_time", True, False),
         ("responsive", False, True),

@@ -53,6 +53,8 @@ def build_linlithgow_town_centre_summary(
         if use_responsive_signals
         else None
     )
+    # Both signal policies reuse the same tracked Linlithgow artefacts so the
+    # experiment changes control logic rather than network or demand inputs.
     scenario = build_tracked_town_centre_scenario_config(
         metadata_path=LINLITHGOW_METADATA_PATH,
         variant=variant,
@@ -67,6 +69,8 @@ def build_linlithgow_town_centre_summary(
         model=model,
         signal_control_hook=signal_control_hook,
     )
+    # Keep the signal label explicit in the summary so later comparison helpers
+    # can parse the same output format across baseline and intervention runs.
     return [
         f"Model: {model.name}",
         f"Variant: {TownCentreVariant(variant).value}",
