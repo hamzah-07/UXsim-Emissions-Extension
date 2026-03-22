@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from pathlib import Path
 import re
 import sys
@@ -62,6 +63,47 @@ def build_linlithgow_signal_policy_rows() -> list[dict[str, str]]:
     return rows
 
 
+def build_linlithgow_signal_policy_delta_rows(
+    rows: list[dict[str, str]] | None = None,
+) -> list[dict[str, str]]:
+    """Build fixed-time versus responsive deltas for each variant and model."""
+
+    rows = build_linlithgow_signal_policy_rows() if rows is None else rows
+    grouped_rows: dict[tuple[str, str], dict[str, dict[str, str]]] = defaultdict(dict)
+    for row in rows:
+        grouped_rows[(row["variant"], row["model_kind"])][row["signal_policy"]] = row
+
+    delta_rows: list[dict[str, str]] = []
+    for (variant, model_kind), policy_rows in grouped_rows.items():
+        fixed_time = policy_rows["fixed_time"]
+        responsive = policy_rows["responsive"]
+        delta_rows.append(
+            {
+                "variant": variant,
+                "model_kind": model_kind,
+                "fixed_time_total_co2_g": fixed_time["total_co2_g"],
+                "responsive_total_co2_g": responsive["total_co2_g"],
+                "delta_total_co2_g": _difference(
+                    responsive["total_co2_g"],
+                    fixed_time["total_co2_g"],
+                ),
+                "fixed_time_intensity_g_per_km": fixed_time["intensity_g_per_km"],
+                "responsive_intensity_g_per_km": responsive["intensity_g_per_km"],
+                "delta_intensity_g_per_km": _difference(
+                    responsive["intensity_g_per_km"],
+                    fixed_time["intensity_g_per_km"],
+                ),
+                "fixed_time_average_delay_s": fixed_time["average_delay_s"],
+                "responsive_average_delay_s": responsive["average_delay_s"],
+                "delta_average_delay_s": _difference(
+                    responsive["average_delay_s"],
+                    fixed_time["average_delay_s"],
+                ),
+            }
+        )
+    return delta_rows
+
+
 def build_linlithgow_signal_policy_comparison_summary(
     *,
     variant: TownCentreVariant | str = TownCentreVariant.BASELINE,
@@ -116,6 +158,10 @@ def _extract_metrics(lines: list[str]) -> dict[str, float]:
         if delay_match is not None:
             metrics["average_delay_s"] = float(delay_match.group(1))
     return metrics
+
+
+def _difference(left: str, right: str) -> str:
+    return f"{float(left) - float(right):.2f}"
 
 
 if __name__ == "__main__":
