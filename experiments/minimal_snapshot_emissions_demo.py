@@ -21,7 +21,7 @@ def build_demo_summary() -> list[str]:
     world, _, _ = build_smoke_world()
     adapter = UXsimAdapter()
     factor_table = load_average_speed_factor_table(
-        PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
+        PROJECT_ROOT / "data" / "emission_factors" / "copert_average_speed_co2_factors.csv"
     )
     model = AverageSpeedCO2Model(factor_table)
 
@@ -53,4 +53,3 @@ def build_demo_summary() -> list[str]:
 
 if __name__ == "__main__":
     print("\n".join(build_demo_summary()))
-

@@ -8,11 +8,9 @@ Suggested structure:
 - `fleet_profiles/` for vehicle mix assumptions
 - `osm/` for curated OSM extracts and preprocessing outputs
 
-The tracked `starter_average_speed_co2_factors.csv` file now stores a small
+The tracked `copert_average_speed_co2_factors.csv` file stores a small
 COPERT-derived representative CO2 table for the repo's simplified
-`passenger_car` average-speed model. The filename has been kept for
-compatibility with the existing loader and experiment paths, but the values are
-no longer placeholder data.
+`passenger_car` average-speed model.
 
 The current table represents:
 

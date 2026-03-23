@@ -19,7 +19,7 @@ class StarterFactorDatasetTestCase(unittest.TestCase):
             PROJECT_ROOT
             / "data"
             / "emission_factors"
-            / "starter_average_speed_co2_factors.csv"
+            / "copert_average_speed_co2_factors.csv"
         )
 
         self.assertEqual(len(table.factors), 6)

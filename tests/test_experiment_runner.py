@@ -21,7 +21,7 @@ from uxsim_emissions.integration import build_baseline_scenario
 from uxsim_emissions.models import AverageSpeedCO2Model, SpeedAccelerationCO2Model
 
 FACTOR_TABLE_PATH = (
-    PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
+    PROJECT_ROOT / "data" / "emission_factors" / "copert_average_speed_co2_factors.csv"
 )
 SPEED_ACCEL_FACTOR_TABLE_PATH = (
     PROJECT_ROOT

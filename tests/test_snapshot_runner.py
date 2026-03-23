@@ -27,7 +27,7 @@ class SnapshotRunnerTestCase(unittest.TestCase):
             PROJECT_ROOT
             / "data"
             / "emission_factors"
-            / "starter_average_speed_co2_factors.csv"
+            / "copert_average_speed_co2_factors.csv"
         )
         cls.model = AverageSpeedCO2Model(factor_table)
 

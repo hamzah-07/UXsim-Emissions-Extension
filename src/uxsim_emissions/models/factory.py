@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 # the repo so config-driven runs keep the same baseline behaviour as the
 # existing scripts unless a caller opts into a different table explicitly.
 DEFAULT_AVERAGE_SPEED_FACTOR_TABLE_PATH = (
-    PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
+    PROJECT_ROOT / "data" / "emission_factors" / "copert_average_speed_co2_factors.csv"
 )
 DEFAULT_SPEED_ACCELERATION_FACTOR_TABLE_PATH = (
     PROJECT_ROOT / "data" / "emission_factors" / "vt_micro_co2_coefficients.csv"

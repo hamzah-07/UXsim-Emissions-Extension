@@ -26,7 +26,7 @@ def build_model_comparison_summary() -> list[str]:
     # paths can read the same interval and give us something comparable.
     average_speed_model = AverageSpeedCO2Model(
         load_average_speed_factor_table(
-            PROJECT_ROOT / "data" / "emission_factors" / "starter_average_speed_co2_factors.csv"
+            PROJECT_ROOT / "data" / "emission_factors" / "copert_average_speed_co2_factors.csv"
         )
     )
     speed_accel_model = SpeedAccelerationCO2Model(

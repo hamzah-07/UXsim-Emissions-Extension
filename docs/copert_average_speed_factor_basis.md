@@ -1,6 +1,6 @@
 # COPERT-Derived Average-Speed Factor Basis
 
-This note records the basis for replacing the tracked starter average-speed
+This note records the basis for replacing the earlier starter average-speed
 CO2 factors with a more credible representative table.
 
 ## Intended model scope

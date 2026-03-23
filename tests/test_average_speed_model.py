@@ -28,7 +28,7 @@ class AverageSpeedCO2ModelTestCase(unittest.TestCase):
             PROJECT_ROOT
             / "data"
             / "emission_factors"
-            / "starter_average_speed_co2_factors.csv"
+            / "copert_average_speed_co2_factors.csv"
         )
         cls.override_factor_table = AverageSpeedFactorTable(
             [
