@@ -51,7 +51,7 @@ def build_linlithgow_model_comparison_summary() -> list[str]:
         f"Speed-acceleration intensity: {speed_acceleration_intensity:.2f} g/km",
         f"Difference: {speed_acceleration_total - average_speed_total:.2f} g",
         f"Intensity gap: {speed_acceleration_intensity - average_speed_intensity:.2f} g/km",
-        "Note: this first Linlithgow baseline comparison is for validation plumbing, not final calibration.",
+        "Note: this summary compares both current model paths on the same Linlithgow baseline.",
     ]
 
 

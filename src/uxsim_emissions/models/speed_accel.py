@@ -52,8 +52,8 @@ class SpeedAccelerationCO2Model(EmissionModel):
             vehicle_type = str(metadata["vehicle_type"])
 
         acceleration_mps2 = 0.0 if acceleration_mps2 is None else acceleration_mps2
-        # VT-Micro is the main path now. The older table stays around for a
-        # bit so the rest of the repo can catch up without one big rewrite.
+        # VT-Micro is the main path now. The older polynomial table remains as
+        # a compatibility path for a few legacy demos and tests.
         if isinstance(self.factor_table, VTMicroFactorTable):
             return self._compute_vt_micro(
                 vehicle_type=vehicle_type,
@@ -64,8 +64,6 @@ class SpeedAccelerationCO2Model(EmissionModel):
             )
 
         factor = self._factor_for_vehicle_type(vehicle_type=vehicle_type)
-        # Keep the older starter-table path alive while the remaining demos
-        # and harness code are moved across to VT-Micro surfaces.
         # Keep the first pass straightforward: evaluate the coefficient
         # surface directly in SI units, then clamp back to zero if the starter
         # coefficients dip below a sensible emission rate.

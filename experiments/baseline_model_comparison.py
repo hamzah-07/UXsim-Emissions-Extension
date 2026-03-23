@@ -39,7 +39,7 @@ def build_baseline_model_comparison_summary() -> list[str]:
         f"Speed-acceleration CO2: {speed_acceleration_total:.2f} g",
         f"Speed-acceleration intensity: {_intensity_g_per_km(speed_acceleration_total, speed_acceleration_distance_m):.2f} g/km",
         f"Difference: {speed_acceleration_total - average_speed_total:.2f} g",
-        "Note: the two factor sets are still at different maturity levels, so treat this gap as provisional.",
+        "Note: this compact comparison is intended as a same-scenario model check.",
     ]
 
 

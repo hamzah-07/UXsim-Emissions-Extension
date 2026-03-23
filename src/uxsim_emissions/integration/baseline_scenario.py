@@ -85,8 +85,9 @@ def build_baseline_scenario(
 
     # The first snapshot is taken straight away so every experiment starts from
     # the same observed state before any simulation time has advanced.
-    # TODO: a richer metadata path would be better than carrying vehicle type
-    # inside the generated vehicle id.
+    # The generated vehicle name still carries the configured vehicle type so
+    # lightweight experiments can recover that metadata without a heavier side
+    # channel.
     initial_snapshot = adapter.capture_snapshot(world)
 
     return BaselineScenario(

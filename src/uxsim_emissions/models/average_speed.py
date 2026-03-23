@@ -62,10 +62,9 @@ class AverageSpeedCO2Model(EmissionModel):
             return series[0].emission_g_per_km
 
         if speed_kph <= series[0].speed_kph:
-            # Early-model choice: clamp outside the known range until we adopt a
-            # final literature-backed extrapolation policy.
-            # TODO: revisit this once the real factor source is locked in. We
-            # may want a more deliberate policy than simple clamping.
+            # Keep the representative curve bounded by the tracked COPERT
+            # points rather than inventing an extrapolated factor outside the
+            # known speed range.
             return series[0].emission_g_per_km
         if speed_kph >= series[-1].speed_kph:
             return series[-1].emission_g_per_km
@@ -115,8 +114,6 @@ class AverageSpeedCO2Model(EmissionModel):
         # cleanest input is distance over elapsed time rather than the final
         # snapshot speed on its own.
         average_speed_mps = distance_m / delta_time_s
-        # TODO: later on, compare this snapshot-pair estimate against the
-        # vehicle log route to see which one behaves better on longer runs.
         return self.compute(
             speed_mps=average_speed_mps,
             distance_m=distance_m,

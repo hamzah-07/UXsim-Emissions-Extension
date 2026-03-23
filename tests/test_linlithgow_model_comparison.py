@@ -27,7 +27,7 @@ class LinlithgowModelComparisonTestCase(unittest.TestCase):
         self.assertIn("Speed-acceleration intensity: 56.73 g/km", output)
         self.assertIn("Difference: -6752.54 g", output)
         self.assertIn("Intensity gap: -70.18 g/km", output)
-        self.assertIn("validation plumbing", output)
+        self.assertIn("same Linlithgow baseline", output)
 
 
 if __name__ == "__main__":

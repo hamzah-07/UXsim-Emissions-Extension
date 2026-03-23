@@ -24,7 +24,7 @@ class BaselineModelComparisonTestCase(unittest.TestCase):
         self.assertIn("Speed-acceleration CO2: 29.10 g", output)
         self.assertIn("Speed-acceleration intensity: 54.49 g/km", output)
         self.assertIn("Difference: -47.14 g", output)
-        self.assertIn("gap as provisional", output)
+        self.assertIn("same-scenario model check", output)
 
 
 if __name__ == "__main__":

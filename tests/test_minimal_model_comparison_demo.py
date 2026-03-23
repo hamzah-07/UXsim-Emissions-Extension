@@ -25,7 +25,7 @@ class MinimalModelComparisonDemoTestCase(unittest.TestCase):
         self.assertIn("Speed-acceleration CO2: 0.30 g", output)
         self.assertIn("Speed-acceleration intensity: 29.95 g/km", output)
         self.assertIn("Difference: -1.06 g", output)
-        self.assertIn("gap is still provisional", output)
+        self.assertIn("both model paths on the same interval", output)
 
 
 if __name__ == "__main__":
