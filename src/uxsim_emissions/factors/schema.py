@@ -12,6 +12,8 @@ class VTMicroRegime(StrEnum):
 
     @classmethod
     def for_acceleration(cls, acceleration_mps2: float) -> "VTMicroRegime":
+        # Zero acceleration stays with the non-negative surface so the split
+        # matches the two-regime form used by the tracked coefficient set.
         if acceleration_mps2 < 0:
             return cls.NEGATIVE_ACCELERATION
         return cls.NON_NEGATIVE_ACCELERATION
@@ -30,6 +32,8 @@ class VTMicroCoefficientSurface:
     emission_rate_unit: str = "mg_per_s"
 
     def __post_init__(self) -> None:
+        # VT-Micro surfaces are always 4x4 in this repo: speed power down the
+        # rows and acceleration power across the columns.
         if len(self.coefficients) != 4 or any(
             len(row) != 4 for row in self.coefficients
         ):
@@ -94,6 +98,8 @@ class AverageSpeedFactorTable:
         vehicle_type: str,
         pollutant: str = "co2",
     ) -> list[AverageSpeedFactor]:
+        # Return the full speed series for one vehicle/pollutant pair so the
+        # model can interpolate across the tracked bins.
         return [
             factor
             for factor in self.factors
@@ -127,6 +133,8 @@ class SpeedAccelerationFactorTable:
         vehicle_type: str,
         pollutant: str = "co2",
     ) -> list[SpeedAccelerationFactor]:
+        # The legacy polynomial path keeps one coefficient set per
+        # vehicle/pollutant pair.
         return [
             factor
             for factor in self.factors

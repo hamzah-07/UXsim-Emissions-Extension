@@ -19,4 +19,6 @@ def derive_acceleration_mps2(
     if delta_time_s <= 0:
         raise ValueError("Observation pair must have a positive elapsed time")
 
+    # Raw snapshots keep speed directly but not acceleration, so infer the
+    # interval acceleration from the change in speed over elapsed time.
     return (current_observation.speed_mps - previous_observation.speed_mps) / delta_time_s

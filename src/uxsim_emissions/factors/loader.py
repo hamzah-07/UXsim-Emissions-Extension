@@ -91,6 +91,8 @@ def load_average_speed_factor_table(path: str | Path) -> AverageSpeedFactorTable
                 )
             )
 
+    # Keep each vehicle/pollutant series in speed order so the average-speed
+    # model can interpolate between neighbouring bins without extra sorting.
     factors.sort(key=lambda factor: (factor.vehicle_type, factor.pollutant, factor.speed_kph))
     return AverageSpeedFactorTable(factors=factors)
 
@@ -131,6 +133,8 @@ def load_speed_acceleration_factor_table(
                 )
             )
 
+    # The older polynomial table expects one row per vehicle/pollutant pair,
+    # so a stable order keeps loading and debugging predictable.
     factors.sort(key=lambda factor: (factor.vehicle_type, factor.pollutant))
     return SpeedAccelerationFactorTable(factors=factors)
 
@@ -156,6 +160,8 @@ def load_vt_micro_factor_table(path: str | Path) -> VTMicroFactorTable:
             )
             # This CSV shape is our own storage format for published VT-Micro
             # surfaces. It is meant to be easy to load and diff in the repo.
+            # The nested tuples rebuild the 4x4 grid in the same row/column
+            # orientation used elsewhere in the VT-Micro helpers.
             surfaces.append(
                 VTMicroCoefficientSurface(
                     vehicle_type=row["vehicle_type"].strip(),
@@ -175,6 +181,8 @@ def load_vt_micro_factor_table(path: str | Path) -> VTMicroFactorTable:
                 )
             )
 
+    # Keep the stored surfaces in a predictable order so lookups and diffs do
+    # not depend on the CSV row order.
     surfaces.sort(key=lambda surface: (surface.vehicle_type, surface.pollutant, surface.regime))
     return VTMicroFactorTable(surfaces=surfaces)
 

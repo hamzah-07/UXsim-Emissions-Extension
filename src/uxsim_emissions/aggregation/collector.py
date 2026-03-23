@@ -12,6 +12,8 @@ class EmissionCollector:
     total_pollutants_g: dict[str, float] = field(default_factory=dict)
 
     def add(self, sample: EmissionSample) -> None:
+        # Keep this collector deliberately narrow: it rolls up pollutant mass,
+        # while distance and fuel stay on the richer sample objects.
         for pollutant, value in sample.pollutants_g.items():
             self.total_pollutants_g[pollutant] = (
                 self.total_pollutants_g.get(pollutant, 0.0) + value
@@ -19,4 +21,3 @@ class EmissionCollector:
 
     def reset(self) -> None:
         self.total_pollutants_g.clear()
-
