@@ -1,4 +1,4 @@
-"""Checks for the tracked starter average-speed dataset."""
+"""Checks for the tracked COPERT-derived average-speed dataset."""
 
 from pathlib import Path
 import sys
@@ -13,8 +13,8 @@ if str(SRC_PATH) not in sys.path:
 from uxsim_emissions.factors import load_average_speed_factor_table
 
 
-class StarterFactorDatasetTestCase(unittest.TestCase):
-    def test_starter_dataset_loads_and_has_expected_series(self) -> None:
+class CopertFactorDatasetTestCase(unittest.TestCase):
+    def test_copert_dataset_loads_and_has_expected_series(self) -> None:
         table = load_average_speed_factor_table(
             PROJECT_ROOT
             / "data"
