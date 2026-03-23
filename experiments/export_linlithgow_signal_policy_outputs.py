@@ -27,6 +27,8 @@ def export_linlithgow_signal_policy_outputs(
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
+    # Build the shared signal-policy rows once so every generated artefact is
+    # based on the same run results and the deltas stay in step with them.
     summary_rows = build_linlithgow_signal_policy_rows()
     delta_rows = build_linlithgow_signal_policy_delta_rows(summary_rows)
 
@@ -144,6 +146,8 @@ def _build_co2_chart_svg(rows: list[dict[str, str]]) -> str:
     labels: list[str] = []
     for index, row in enumerate(rows):
         total_co2 = float(row["total_co2_g"])
+        # The chart is intentionally simple: one bar per run so the visual
+        # comparison matches the summary and delta tables without extra logic.
         bar_height = 0.0 if max_co2 <= 0 else chart_height * (total_co2 / max_co2)
         x = chart_left + index * (bar_width + gap)
         y = chart_top + chart_height - bar_height
@@ -184,6 +188,8 @@ def _build_signal_policy_summary_markdown(
     summary_rows: list[dict[str, str]],
     delta_rows: list[dict[str, str]],
 ) -> str:
+    # Keep the markdown export close to dissertation-ready wording so it can
+    # be reused in notes without reformatting the CSV tables by hand.
     lines = [
         "# Linlithgow Signal Policy Summary",
         "",

@@ -28,6 +28,8 @@ def build_linlithgow_signal_policy_rows() -> list[dict[str, str]]:
     """Build structured signal-policy rows across tracked demand variants."""
 
     rows: list[dict[str, str]] = []
+    # Keep the row shape stable across both demand variants so later exports
+    # can turn the same read-out into tables, charts, and markdown notes.
     for variant_value in (
         TownCentreVariant.BASELINE,
         TownCentreVariant.PEAK_DEMAND,
@@ -75,6 +77,8 @@ def build_linlithgow_signal_policy_delta_rows(
 
     delta_rows: list[dict[str, str]] = []
     for (variant, model_kind), policy_rows in grouped_rows.items():
+        # Compare like with like: same demand variant, same emissions model,
+        # only the signal policy changes between these paired rows.
         fixed_time = policy_rows["fixed_time"]
         responsive = policy_rows["responsive"]
         delta_rows.append(
@@ -147,6 +151,8 @@ def _extract_metrics(lines: list[str]) -> dict[str, float]:
             continue
         total_match = TOTAL_CO2_PATTERN.match(line)
         if total_match is not None:
+            # Keep distance as well as CO2 so the structured rows can support
+            # later table exports without reparsing the raw summary again.
             metrics["total_co2_g"] = float(total_match.group(1))
             metrics["distance_m"] = float(total_match.group(2))
             continue
