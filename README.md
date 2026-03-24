@@ -41,6 +41,26 @@ Run the full test suite with:
 .venv/bin/python -m unittest discover -s tests
 ```
 
+## Usage
+
+Run the tracked Linlithgow town-centre experiment:
+
+```bash
+.venv/bin/python experiments/linlithgow_town_centre_experiment.py
+```
+
+Export the Linlithgow analysis outputs:
+
+```bash
+.venv/bin/python experiments/export_linlithgow_analysis_outputs.py
+```
+
+Export the Linlithgow signal-policy comparison outputs:
+
+```bash
+.venv/bin/python experiments/export_linlithgow_signal_policy_outputs.py
+```
+
 ## Commit Messages
 
 We follow Conventional Commits:(https://www.conventionalcommits.org/) - basically giving each commit a header such as `feat:`, `fix:`, `chore:`, `docs:`, etc.
