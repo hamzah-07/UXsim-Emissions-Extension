@@ -20,6 +20,27 @@ The current repo includes:
 - analysis exports for model comparison, hotspot inspection, runtime
   benchmarking, and signal-policy comparison
 
+## Setup
+
+Create a virtual environment and install the project in editable mode:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+.venv/bin/python -m pip install -e .[dev,osm,viz]
+```
+
+The project metadata currently supports Python `>=3.10`. The development work
+for this repo has been carried out on Python `3.12`.
+
+## Tests
+
+Run the full test suite with:
+
+```bash
+.venv/bin/python -m unittest discover -s tests
+```
+
 ## Commit Messages
 
 We follow Conventional Commits:(https://www.conventionalcommits.org/) - basically giving each commit a header such as `feat:`, `fix:`, `chore:`, `docs:`, etc.
