@@ -74,8 +74,10 @@ Export the Linlithgow signal-policy comparison outputs:
 - Generated analysis artefacts are written to `outputs/`, which is ignored by
   Git.
 
-## Commit Messages
+## Project Management
 
-We follow Conventional Commits:(https://www.conventionalcommits.org/) - basically giving each commit a header such as `feat:`, `fix:`, `chore:`, `docs:`, etc.
+The project was managed through a lightweight iterative workflow rather than a formal agile process such as Scrum. Development followed the semester work plan set out in the D1 proposal, with features implemented in small, focused, and testable increments. All changes were tracked using Git version control on GitHub, with every commit written according to the Conventional Commits specification: (https://www.conventionalcommits.org/)
+basically giving each commit a header such as `feat:`, `fix:`, `chore:`, `docs:`, etc. This makes the git history much easier to read.
 
-This makes the git history much easier to read.
+Progress was monitored through the commit history, a comprehensive automated test suite (run after every significant change), milestone deliverables, and regular updates to the dissertation document. This approach ensured the project remained structured, transparent, and traceable without requiring a separate task-management platform.
+
