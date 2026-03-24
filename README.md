@@ -30,6 +30,12 @@ source .venv/bin/activate
 .venv/bin/python -m pip install -e .[dev,osm,viz]
 ```
 
+The same full development setup is also available through the convenience file:
+
+```bash
+.venv/bin/python -m pip install -r requirements-dev.txt
+```
+
 The project metadata currently supports Python `>=3.10`. The development work
 for this repo has been carried out on Python `3.12`.
 
@@ -80,4 +86,3 @@ The project was managed through a lightweight iterative workflow rather than a f
 basically giving each commit a header such as `feat:`, `fix:`, `chore:`, `docs:`, etc. This makes the git history much easier to read.
 
 Progress was monitored through the commit history, a comprehensive automated test suite (run after every significant change), milestone deliverables, and regular updates to the dissertation document. This approach ensured the project remained structured, transparent, and traceable without requiring a separate task-management platform.
-
