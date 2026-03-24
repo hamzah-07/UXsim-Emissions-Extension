@@ -61,6 +61,19 @@ Export the Linlithgow signal-policy comparison outputs:
 .venv/bin/python experiments/export_linlithgow_signal_policy_outputs.py
 ```
 
+## Data and Scope Notes
+
+- The average-speed model uses a COPERT-derived representative CO2 curve for a
+  simplified `passenger_car` category.
+- The speed-acceleration model uses the tracked VT-Micro passenger-car CO2
+  coefficient dataset.
+- The Linlithgow baseline and peak-demand demand files are hand-built scenario
+  assumptions rather than calibrated observed OD matrices.
+- The fuel-based model discussed in the dissertation proposal was deferred and
+  is not part of the current implementation.
+- Generated analysis artefacts are written to `outputs/`, which is ignored by
+  Git.
+
 ## Commit Messages
 
 We follow Conventional Commits:(https://www.conventionalcommits.org/) - basically giving each commit a header such as `feat:`, `fix:`, `chore:`, `docs:`, etc.
