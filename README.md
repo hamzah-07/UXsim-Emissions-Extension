@@ -80,6 +80,27 @@ Export the Linlithgow signal-policy comparison outputs:
 - Generated analysis artefacts are written to `outputs/`, which is ignored by
   Git.
 
+## Dataset Locations
+
+- `data/emission_factors/copert_average_speed_co2_factors.csv`: COPERT-derived
+  representative average-speed CO2 factors used by the average-speed model.
+- `data/emission_factors/vt_micro_co2_coefficients.csv`: tracked VT-Micro CO2
+  coefficient surfaces used by the speed-acceleration model.
+- `scenarios/town_centre/linlithgow_nodes.csv`: node definitions for the
+  Linlithgow town-centre network.
+- `scenarios/town_centre/linlithgow_links.csv`: link definitions for the
+  Linlithgow town-centre network.
+- `scenarios/town_centre/linlithgow_baseline_demands.json`: baseline synthetic
+  demand profile for the Linlithgow case study.
+- `scenarios/town_centre/linlithgow_peak_demand_demands.json`: heavier-demand
+  variant used for congestion and model-comparison experiments.
+- `scenarios/town_centre/linlithgow_fixed_time_signals.json`: fixed-time signal
+  plan used in the signal-policy comparison.
+- `scenarios/town_centre/linlithgow_metadata.json`: supporting metadata for the
+  Linlithgow case study configuration.
+- `scenarios/town_centre/baseline_demand_assumptions.md`: short note describing
+  the assumptions behind the baseline demand file.
+
 ## Project Management
 
 The project was managed through a lightweight iterative workflow rather than a formal agile process such as Scrum. Development followed the semester work plan set out in the D1 proposal, with features implemented in small, focused, and testable increments. All changes were tracked using Git version control on GitHub, with every commit written according to the Conventional Commits specification: (https://www.conventionalcommits.org/)
